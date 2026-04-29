@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>EPM Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--g:#1E3D2F;--gold:#B89A5A;--red:#8B3A2A;--bg:#F4F7F5;--text:#1a1a1a;--border:#e2e8e4;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Jost,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button{font-family:Jost,sans-serif;cursor:pointer}
+.header{background:var(--g);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-title{font-size:1.1rem;font-weight:700;color:#fff}
+.header-title span{color:var(--gold)}
+.header-sub{font-size:.72rem;color:rgba(255,255,255,.55);letter-spacing:.08em;text-transform:uppercase}
+.gold-bar{height:3px;background:linear-gradient(90deg,var(--gold),#d4b87a,var(--gold))}
+.pin-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px}
+.pin-logo{font-size:2rem;font-weight:700;color:var(--g);margin-bottom:8px}
+.pin-logo span{color:var(--gold)}
+.pin-sub{font-size:.85rem;color:#888;margin-bottom:40px;text-align:center}
+.pin-label{font-size:.8rem;font-weight:700;color:var(--g);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.pin-input{width:200px;padding:14px 20px;font-family:Jost,sans-serif;font-size:1.4rem;font-weight:700;text-align:center;letter-spacing:.3em;border:2px solid var(--border);border-radius:12px;background:#fff;color:var(--g);outline:none;margin-bottom:16px}
+.pin-input:focus{border-color:var(--g)}
+.pin-btn{background:var(--g);color:#fff;border:none;border-radius:12px;padding:14px 40px;font-size:1rem;font-weight:700;letter-spacing:.05em}
+.pin-error{color:var(--red);font-size:.85rem;margin-top:12px;display:none}
+.dash-nav{display:flex;border-bottom:2px solid var(--border);background:#fff;position:sticky;top:60px;z-index:90}
+.dash-nav-btn{flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#888;transition:all .15s}
+.dash-nav-btn.active{color:var(--g);border-bottom-color:var(--g)}
+.dash-wrap{max-width:700px;margin:0 auto;padding:24px 20px 60px}
+.dash-title{font-size:1.4rem;font-weight:700;color:var(--g);margin-bottom:4px}
+.dash-sub{font-size:.85rem;color:#888;margin-bottom:20px}
+.filter-bar{display:flex;gap:8px;margin-bottom:20px}
+.filter-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:Jost,sans-serif;font-size:.78rem;font-weight:700;color:#888;cursor:pointer}
+.filter-btn.active{background:var(--g);color:#fff;border-color:var(--g)}
+.prop-group{margin-bottom:28px}
+.prop-group-name{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--border)}
+.issue-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1.5px solid var(--border)}
+.issue-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.issue-cleaner{font-size:.78rem;font-weight:700;color:var(--g)}
+.issue-date{font-size:.72rem;color:#999}
+.issue-note{font-size:.88rem;color:var(--text);line-height:1.5}
+.issue-badge{display:inline-block;background:#fff3cd;color:#856404;font-size:.65rem;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:20px;margin-left:8px;text-transform:uppercase}
+.no-issues{text-align:center;padding:60px 20px;color:#aaa;font-size:.9rem}
+.inv-wrap{max-width:700px;margin:0 auto;padding:24px 20px 60px}
+.inv-select-row{display:flex;gap:12px;align-items:center;margin-bottom:24px}
+.inv-select-label{font-size:.8rem;font-weight:700;color:var(--g);letter-spacing:.06em;text-transform:uppercase}
+.inv-month-select{padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-family:Jost,sans-serif;font-size:.9rem;font-weight:600;color:var(--g);cursor:pointer;outline:none}
+.inv-prop-card{background:#fff;border-radius:12px;padding:16px 18px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.inv-prop-name{font-size:1rem;font-weight:700;color:var(--g)}
+.inv-prop-meta{font-size:.78rem;color:#888;margin-top:2px}
+.inv-view-btn{background:var(--g);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:.78rem;font-weight:700;cursor:pointer}
+.inv-no-data{text-align:center;padding:60px 20px;color:#aaa;font-size:.9rem}
+.inv-doc-screen{display:none;position:fixed;inset:0;background:var(--bg);overflow-y:auto;z-index:200}
+.inv-doc-screen.active{display:block}
+.inv-doc-topbar{background:var(--g);padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:10}
+.inv-doc-back{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:700}
+.inv-doc-print{background:var(--gold);color:#fff;border:none;border-radius:8px;padding:6px 18px;font-size:.78rem;font-weight:700;margin-left:auto}
+.inv-doc{background:#fff;max-width:760px;margin:24px auto 40px;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.inv-doc-header{background:var(--g);padding:28px 36px;display:flex;justify-content:space-between;align-items:flex-start}
+.inv-doc-co{color:#fff;font-size:1.5rem;font-weight:700}
+.inv-doc-invoice{color:var(--gold);font-size:1.6rem;font-weight:700}
+.inv-doc-sub{color:var(--gold);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+.inv-doc-meta{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:2px solid var(--border);padding:20px 36px}
+.inv-doc-meta-item label{display:block;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:4px}
+.inv-doc-meta-item strong{display:block;font-size:.92rem;font-weight:700;color:var(--text)}
+.inv-doc-parties{display:grid;grid-template-columns:1fr 1fr 1fr;padding:20px 36px;border-bottom:2px solid var(--border)}
+.inv-doc-party label{display:block;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:6px}
+.inv-doc-party strong{display:block;font-size:.9rem;font-weight:700;color:var(--text)}
+.inv-doc-party p{font-size:.82rem;color:#555;line-height:1.6;margin-top:2px;white-space:pre-line}
+.inv-doc-body{padding:24px 36px}
+.inv-doc-body h3{font-size:1rem;font-weight:700;color:var(--g);margin-bottom:14px}
+.inv-table{width:100%;border-collapse:collapse}
+.inv-table th{background:var(--g);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;text-align:left}
+.inv-table th:last-child{text-align:right}
+.inv-table td{padding:10px 14px;font-size:.85rem;border-bottom:1px solid var(--border)}
+.inv-table td:last-child{text-align:right;font-weight:600}
+.inv-table tr.extra-row td{background:#f9f9f9;font-size:.8rem;padding:7px 14px 7px 28px;color:#555}
+.inv-table tr.section-divider td{background:transparent;padding:8px 14px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#aaa;border-bottom:none}
+.inv-table tr.subtotal-row td{font-size:.85rem;color:#555}
+.inv-table tr.total-row{background:var(--g)}
+.inv-table tr.total-row td{color:#fff;font-size:1rem;font-weight:700;border-bottom:none}
+.inv-doc-footer-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;padding:20px 36px;border-top:2px solid var(--border)}
+.inv-doc-footer-info h4{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.inv-doc-footer-info p{font-size:.78rem;color:#555;line-height:1.6}
+.inv-doc-bottom{background:var(--g);padding:12px 36px;display:flex;justify-content:space-between}
+.inv-doc-bottom span{font-size:.72rem;color:var(--gold)}
+@media print{.inv-doc-topbar,.dash-nav,.header,.gold-bar{display:none!important}.inv-doc-screen{position:static!important;background:#fff!important}.inv-doc{box-shadow:none!important;margin:0!important;border-radius:0!important}}
+</style>
+</head>
+<body>
+<div id="pin-screen" class="pin-screen">
+  <div class="pin-logo">Evans <span>Property Management</span></div>
+  <div class="pin-sub">Admin Dashboard</div>
+  <div class="pin-label">Enter PIN</div>
+  <input type="password" inputmode="numeric" maxlength="6" class="pin-input" id="pin-input" placeholder="****">
+  <button class="pin-btn" onclick="checkPin()">Enter</button>
+  <div class="pin-error" id="pin-error">Incorrect PIN. Try again.</div>
+</div>
+<div id="main-app" style="display:none">
+  <div class="header"><div><div class="header-title">Evans <span>Property Management</span></div><div class="header-sub">Admin Dashboard</div></div></div>
+  <div class="gold-bar"></div>
+  <div class="dash-nav">
+    <button class="dash-nav-btn active" id="nav-reports" onclick="showTab('reports')">Reports</button>
+    <button class="dash-nav-btn" id="nav-invoices" onclick="showTab('invoices')">Invoices</button>
+  </div>
+  <div id="tab-reports" class="dash-wrap">
+    <div class="dash-title">Team Reports</div>
+    <div class="dash-sub">Notes and issues logged by your cleaners</div>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterIssues('all',this)">All</button>
+      <button class="filter-btn" onclick="filterIssues('week',this)">This Week</button>
+      <button class="filter-btn" onclick="filterIssues('month',this)">This Month</button>
+    </div>
+    <div id="issues-list"><div class="no-issues">Loading reports...</div></div>
+  </div>
+  <div id="tab-invoices" class="inv-wrap" style="display:none">
+    <div class="inv-select-row">
+      <span class="inv-select-label">Month</span>
+      <select class="inv-month-select" id="inv-month-sel" onchange="generateInvoices()"></select>
+    </div>
+    <div id="inv-cards"><div class="inv-no-data">Select a month to generate invoices.</div></div>
+  </div>
+</div>
+<div class="inv-doc-screen" id="inv-doc-screen">
+  <div class="inv-doc-topbar">
+    <button class="inv-doc-back" onclick="closeInvoice()">Back</button>
+    <button class="inv-doc-print" onclick="window.print()">Print / Save PDF</button>
+  </div>
+  <div class="inv-doc" id="inv-doc-content"></div>
+</div>
+<script>
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxUDsON3GhWBoqlTaChyHCWKHutuvT4RFiZpbEUi5dG_-6yMM-GpsGUoMwQP7x922lnYA/exec';
+const PIN='1234';
+const OWNER_DATA={'Maes Dyfed':{owner:'Maes Dyfed - Owner',address:'',ref:'MD',mgmtFee:80},'Arosfa':{owner:'Arosfa - Owner',address:'',ref:'A',mgmtFee:99},'Teifi View':{owner:'Teifi View - Owner',address:'',ref:'TV',mgmtFee:null},'Ty Gladys':{owner:'Ty Gladys - Owner',address:'',ref:'TG',mgmtFee:79},'Ty Eufron':{owner:'Ty Eufron - Huw Reynolds',address:'Ty Eufron\nSquare & Compass\nSA62 5JJ',ref:'TE',mgmtFee:79},'Brynhowell':{owner:'Brynhowell - Owner',address:'',ref:'BFH',mgmtFee:null},'Stambar':{owner:'Stambar - Owner',address:'',ref:'STB',mgmtFee:null},'Ty Pinc':{owner:'Ty Pinc - Owner',address:'',ref:'TP',mgmtFee:null},'Cwm Hyfryd':{owner:'Cwm Hyfryd - Owner',address:'',ref:'CH',mgmtFee:null}};
+const PROPS_CFG={'Maes Dyfed':{rateType:'split',rateShort:130,rateLong:170,threshold:4,mgmtFee:80},'Arosfa':{rateType:'split',rateShort:130,rateLong:170,threshold:4,mgmtFee:99},'Teifi View':{rateType:'split',rateShort:110,rateLong:130,threshold:4,mgmtFee:null},'Ty Gladys':{rateType:'split',rateShort:125,rateLong:160,threshold:4,mgmtFee:79},'Ty Eufron':{rateType:'split',rateShort:150,rateLong:180,threshold:4,mgmtFee:79},'Brynhowell':{rateType:'flat',flatRate:250,mgmtFee:null},'Stambar':{rateType:'flat',flatRate:140,mgmtFee:null},'Ty Pinc':{rateType:'flat',flatRate:130,mgmtFee:null},'Cwm Hyfryd':{rateType:'allinc',flatRate:260,mgmtFee:null}};
+let changeovers=[],bookings=[];
+
+function checkPin(){
+  const v=document.getElementById('pin-input').value;
+  if(v===PIN){document.getElementById('pin-screen').style.display='none';document.getElementById('main-app').style.display='block';loadData();}
+  else{document.getElementById('pin-error').style.display='block';document.getElementById('pin-input').value='';}
+}
+document.getElementById('pin-input').addEventListener('keydown',function(e){if(e.key==='Enter')checkPin();});
+
+function showTab(t){
+  document.getElementById('tab-reports').style.display=t==='reports'?'block':'none';
+  document.getElementById('tab-invoices').style.display=t==='invoices'?'block':'none';
+  document.getElementById('nav-reports').classList.toggle('active',t==='reports');
+  document.getElementById('nav-invoices').classList.toggle('active',t==='invoices');
+}
+
+async function loadData(){
+  try{
+    const [cr,br]=await Promise.all([fetch(APPS_SCRIPT_URL+'?action=changeovers'),fetch(APPS_SCRIPT_URL+'?action=bookings')]);
+    const cd=await cr.json();const bd=await br.json();
+    changeovers=cd.data||[];bookings=bd.data||[];
+    renderIssues('all');buildMonthOptions();
+  }catch(e){document.getElementById('issues-list').innerHTML='<div class="no-issues">Failed to load. Check connection.</div>';}
+}
+
+function filterIssues(f,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderIssues(f);
+}
+
+function renderIssues(filter){
+  const now=new Date();
+  const wk=new Date(now-7*86400000);
+  const mo=new Date(now.getFullYear(),now.getMonth(),1);
+  const notes=changeovers.filter(c=>{
+    const n=(c.Notes||c.notes||'').trim();if(!n)return false;
+    const d=new Date(c.Date||c.date||c.Timestamp||'');
+    if(filter==='week')return d>=wk;if(filter==='month')return d>=mo;return true;
+  });
+  const el=document.getElementById('issues-list');
+  if(!notes.length){el.innerHTML='<div class="no-issues">No issues reported for this period.</div>';return;}
+  const byProp={};
+  notes.forEach(c=>{const p=c.Property||c.property||'Unknown';if(!byProp[p])byProp[p]=[];byProp[p].push(c);});
+  el.innerHTML=Object.entries(byProp).map(([prop,items])=>{
+    const cards=items.map(c=>{
+      const dateStr=c.Date||c.date||c.Timestamp||'';
+      const d=new Date(dateStr);
+      const isNew=(now-d)<7*86400000;
+      const fmt=isNaN(d)?dateStr:d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      const cleaner=c.Cleaner||c.cleaner||c.Name||'';
+      const note=c.Notes||c.notes||'';
+      return '<div class="issue-card"><div class="issue-card-top"><span class="issue-cleaner">'+cleaner+(isNew?'<span class="issue-badge">NEW</span>':'')+'</span><span class="issue-date">'+fmt+'</span></div><div class="issue-note">'+note+'</div></div>';
+    }).join('');
+    return '<div class="prop-group"><div class="prop-group-name">'+prop+'</div>'+cards+'</div>';
+  }).join('');
+}
+
+function buildMonthOptions(){
+  const sel=document.getElementById('inv-month-sel');
+  const now=new Date();
+  const opts=[];
+  for(let i=0;i<6;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const label=d.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+    opts.push('<option value="'+val+'">'+label+'</option>');
+  }
+  sel.innerHTML=opts.join('');generateInvoices();
+}
+
+function generateInvoices(){
+  const sel=document.getElementById('inv-month-sel');
+  const parts=sel.value.split('-');
+  const yr=parseInt(parts[0]),mo=parseInt(parts[1]);
+  const ms=new Date(yr,mo-1,1),me=new Date(yr,mo,0,23,59,59);
+  const byProp={};
+  changeovers.forEach(c=>{
+    const d=new Date(c.Date||c.date||c.Timestamp||'');
+    if(d>=ms&&d<=me){const p=c.Property||c.property||'Unknown';if(!byProp[p])byProp[p]=[];byProp[p].push(c);}
+  });
+  const container=document.getElementById('inv-cards');
+  if(!Object.keys(byProp).length){container.innerHTML='<div class="inv-no-data">No changeovers found for this month.</div>';return;}
+  container.innerHTML=Object.entries(byProp).map(([prop,items])=>{
+    const cfg=PROPS_CFG[prop]||{};
+    const total=items.reduce((sum,c)=>{
+      const nights=parseInt(c.Nights||c.nights||0)||0;
+      let rate=0;
+      if(cfg.rateType==='split')rate=nights>=(cfg.threshold||4)?cfg.rateLong:cfg.rateShort;
+      else if(cfg.rateType==='flat'||cfg.rateType==='allinc')rate=cfg.flatRate||0;
+      return sum+rate;
+    },0)+(cfg.mgmtFee||0);
+    const monthVal=sel.value;
+    return '<div class="inv-prop-card"><div><div class="inv-prop-name">'+prop+'</div><div class="inv-prop-meta">'+items.length+' changeover'+(items.length!==1?'s':'')+' &middot; Total: &pound;'+total.toFixed(2)+'</div></div><button class="inv-view-btn" onclick="viewInvoice(''+prop+'',''+monthVal+'')">View Invoice</button></div>';
+  }).join('');
+}
+
+function viewInvoice(propName,monthVal){
+  const parts=monthVal.split('-');
+  const yr=parseInt(parts[0]),mo=parseInt(parts[1]);
+  const ms=new Date(yr,mo-1,1),me=new Date(yr,mo,0,23,59,59);
+  const monthLabel=ms.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const items=changeovers.filter(c=>{
+    const d=new Date(c.Date||c.date||c.Timestamp||'');
+    const p=c.Property||c.property||'';
+    return p===propName&&d>=ms&&d<=me;
+  });
+  const cfg=PROPS_CFG[propName]||{};
+  const owner=OWNER_DATA[propName]||{owner:propName+' - Owner',address:'',ref:propName.substring(0,3).toUpperCase(),mgmtFee:null};
+  const yy=String(yr).slice(-2),mm=String(mo).padStart(2,'0');
+  const invNum='EPM-'+yy+mm+'-'+(owner.ref||'XX');
+  const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
+  let coTotal=0;
+  const rows=items.map(c=>{
+    const nights=parseInt(c.Nights||c.nights||0)||0;
+    const stayType=c['Stay Type']||c.stayType||c.StayType||(nights>=(cfg.threshold||4)?'Long stay':'Short stay');
+    const guest=c.Guest||c.guest||'Guest';
+    const endDate=c['Check-out']||c.checkout||c.CheckOut||c.Date||c.date||'';
+    let rate=0;
+    if(cfg.rateType==='split')rate=nights>=(cfg.threshold||4)?cfg.rateLong:cfg.rateShort;
+    else if(cfg.rateType==='flat'||cfg.rateType==='allinc')rate=cfg.flatRate||0;
+    const adhocRaw=c['Ad Hoc']||c.adhoc||c.AdHoc||'';
+    let adhocTotal=0;
+    let extraRows='';
+    const rawExtras=c.Extras||c.extras||c['Extras Purchased']||'';
+    if(rawExtras&&rawExtras!=='None'){
+      String(rawExtras).split(',').forEach(e=>{const t=e.trim();if(t)extraRows+='<tr class="extra-row"><td colspan="2">'+t+'</td><td>Included</td></tr>';});
+    }
+    if(adhocRaw&&adhocRaw!=='None'){
+      String(adhocRaw).split(',').forEach(e=>{const m=e.trim().match(/^(.+)\s+[£GBP]?([\d.]+)$/);if(m){const cost=parseFloat(m[2]);adhocTotal+=cost;coTotal+=cost;extraRows+='<tr class="extra-row"><td colspan="2">'+m[1].trim()+'</td><td>&pound;'+cost.toFixed(2)+'</td></tr>';}});
+    }
+    coTotal+=rate;
+    return '<tr><td><strong>'+stayType+' - '+guest+'</strong><br><small>'+endDate+'</small></td><td>'+nights+' night'+(nights!==1?'s':'')+'</td><td>&pound;'+rate.toFixed(2)+'</td></tr>'+extraRows;
+  }).join('');
+  const mgmt=owner.mgmtFee||cfg.mgmtFee||0;
+  const total=coTotal+mgmt;
+  const addrLines=owner.address?owner.address.split('\n').join('<br>'):'';
+  document.getElementById('inv-doc-content').innerHTML=
+    '<div class="inv-doc-header"><div><div class="inv-doc-co">Evans Property Management</div><div class="inv-doc-sub">Holiday Let Management &middot; West Wales</div></div><div class="inv-doc-invoice">Invoice</div></div>'+
+    '<div class="inv-doc-meta"><div class="inv-doc-meta-item"><label>Invoice</label><strong>'+invNum+'</strong></div><div class="inv-doc-meta-item"><label>Date</label><strong>'+today+'</strong></div><div class="inv-doc-meta-item"><label>Period</label><strong>'+monthLabel+'</strong></div><div class="inv-doc-meta-item"><label>Due</label><strong>Within 7 days</strong></div></div>'+
+    '<div class="inv-doc-parties"><div class="inv-doc-party"><label>From</label><strong>Evans Property Management</strong><p>Llanboidy<br>Carmarthenshire<br>SA34 0EU<br>Evandaviespropertymanagement@gmail.com<br>07398 074688</p></div><div class="inv-doc-party"><label>Billed To</label><strong>'+owner.owner+'</strong><p>'+addrLines+'</p></div><div class="inv-doc-party"><label>Property</label><strong>'+propName+'</strong></div></div>'+
+    '<div class="inv-doc-body"><h3>Management statement for '+monthLabel+'</h3><table class="inv-table"><thead><tr><th>Description</th><th>Detail</th><th>Amount</th></tr></thead><tbody>'+
+    rows+
+    (mgmt?'<tr class="section-divider"><td colspan="3">Management Fee</td></tr><tr class="subtotal-row"><td>Management Fee</td><td>Monthly</td><td></td></tr>':'')+
+    '<tr class="subtotal-row"><td>Changeovers &amp; extras</td><td></td><td>&pound;'+coTotal.toFixed(2)+'</td></tr>'+
+    (mgmt?'<tr class="subtotal-row"><td>Management fee</td><td></td><td>&pound;'+mgmt.toFixed(2)+'</td></tr>':'')+
+    '<tr class="total-row"><td colspan="2"><strong>Total Due</strong></td><td><strong>&pound;'+total.toFixed(2)+'</strong></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="inv-doc-footer-info"><div><h4>Payment Details</h4><p>Monzo-Evans Property Man<br>Sort code: 04-00-03<br>Account: 94071903<br>Ref: '+invNum+'</p></div><div><h4>Terms</h4><p>Payment to be kindly made within 7 days of issue date via BACS.</p></div><div><h4>Notes</h4><p>VAT is not applicable - Evans Property Management is not VAT registered.</p></div></div>'+
+    '<div class="inv-doc-bottom"><span>Evans Property Management &middot; VAT not applicable</span><span>Thank you for trusting us with your property.</span></div>';
+  document.getElementById('inv-doc-screen').classList.add('active');
+}
+
+function closeInvoice(){document.getElementById('inv-doc-screen').classList.remove('active');}
+</script>
+</body>
+</html>
