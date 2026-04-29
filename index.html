@@ -40,9 +40,6 @@ input,textarea,select{font-family:Jost,sans-serif}
 .props-header{max-width:540px;margin:0 auto;padding:24px 20px 0}
 .greeting{font-size:1.4rem;font-weight:700;color:var(--g);margin-bottom:4px}
 .greeting-sub{font-size:.88rem;color:#888;margin-bottom:20px}
-.owner-nav-bar{display:flex;gap:10px;margin-bottom:20px;max-width:540px;margin-left:auto;margin-right:auto;padding:0 20px}
-.owner-nav-btn{flex:1;padding:12px 8px;background:#fff;border:1.5px solid var(--border);border-radius:10px;font-family:Jost,sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g);cursor:pointer;text-align:center;transition:all .15s}
-.owner-nav-btn:active{background:var(--g);color:#fff;border-color:var(--g)}
 .sched-wrap{max-width:540px;margin:0 auto;padding:0 20px}
 .priority-banner{background:#fff0ed;border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
 .priority-banner-icon{font-size:1.1rem}
@@ -135,20 +132,6 @@ input,textarea,select{font-family:Jost,sans-serif}
 .log-another-btn{padding:14px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .done-btn{padding:14px;background:none;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.85rem;color:#888}
 
-/* ── Dashboard / Issues ───────────────────────────────── */
-.dash-wrap{max-width:540px;margin:0 auto;padding:0 20px 40px}.dash-header{margin-bottom:20px}.dash-title{font-size:1.4rem;font-weight:700;color:var(--g)}.dash-sub{font-size:.85rem;color:#888;margin-top:2px}#dash-filter-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}.dash-filter-btn{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-family:Jost,sans-serif;font-size:.8rem;font-weight:600;color:#555;cursor:pointer;text-transform:uppercase;letter-spacing:.05em}.dash-filter-btn.active{background:var(--g);border-color:var(--g);color:#fff}.dash-loading{color:#aaa;font-size:.9rem;padding:20px 0}.dash-prop-group{margin-bottom:20px}.dash-prop-name{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #e8e0d0}.dash-issue-card{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:8px;border-left:3px solid var(--g);box-shadow:0 1px 4px rgba(0,0,0,.06)}.dash-issue-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.dash-issue-cleaner{font-size:.75rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.05em}.dash-issue-date{font-size:.72rem;color:#aaa}.dash-issue-text{font-size:.88rem;color:#333;line-height:1.5}.dash-no-issues{text-align:center;padding:40px 20px;color:#aaa;font-size:.9rem}.dash-new-badge{background:var(--gold);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.05em;margin-left:6px;vertical-align:middle}
-
-/* ── Invoice picker ───────────────────────────────────── */
-.inv-picker-wrap{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 6px rgba(0,0,0,.07)}.inv-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;display:block;margin-bottom:8px}.inv-select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:Jost,sans-serif;font-size:1rem;color:#333;background:#fafafa;margin-bottom:14px}.inv-gen-btn{width:100%;padding:14px;background:var(--g);color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.inv-prop-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);display:flex;justify-content:space-between;align-items:center}.inv-prop-info .inv-prop-nm{font-weight:700;color:var(--g);font-size:1rem}.inv-prop-info .inv-prop-det{font-size:.8rem;color:#888;margin-top:2px}.inv-prop-total{font-size:1.1rem;font-weight:700;color:var(--g)}.inv-view-btn{background:var(--g);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:Jost,sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;letter-spacing:.05em;text-transform:uppercase;margin-top:8px}.inv-no-data{color:#aaa;font-size:.9rem;padding:20px 0;text-align:center}
-
-/* ── Print actions ───────────────────────────────────── */
-.inv-print-actions{max-width:540px;margin:0 auto;padding:16px;display:flex;gap:12px}.inv-print-btn{flex:1;padding:14px;background:var(--g);color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer}
-
-/* ── Print media ─────────────────────────────────────── */
-@media print{.no-print{display:none!important}#compact-hdr,#compact-gold,.view:not(#view-invoice-print){display:none!important}#view-invoice-print{display:block!important}body{background:#fff!important}}
-
-/* ── Invoice document ─────────────────────────────────── */
-.invoice-doc{max-width:740px;margin:0 auto;background:#fff;font-family:'Georgia',serif;color:#222}.inv-doc-header{background:var(--g);color:#fff;padding:32px 36px 24px;display:flex;justify-content:space-between;align-items:flex-start}.inv-doc-company{font-family:Jost,sans-serif}.inv-doc-company-name{font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:-.01em}.inv-doc-company-sub{font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}.inv-doc-title{font-size:2rem;font-weight:700;color:var(--gold);font-family:Jost,sans-serif}.inv-doc-meta{padding:24px 36px;border-bottom:1px solid #eee;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.inv-doc-meta-item label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#aaa;display:block;margin-bottom:4px;font-family:Jost,sans-serif}.inv-doc-meta-item strong{font-size:.95rem;font-weight:700;color:var(--g);font-family:Jost,sans-serif;display:block}.inv-doc-parties{padding:24px 36px;border-bottom:1px solid #eee;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}.inv-party label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#aaa;display:block;margin-bottom:6px;font-family:Jost,sans-serif}.inv-party strong{font-size:.9rem;font-weight:700;color:#222;display:block;margin-bottom:4px;font-family:Jost,sans-serif}.inv-party p{font-size:.82rem;color:#555;line-height:1.6;margin:0;font-family:Jost,sans-serif}.inv-doc-body{padding:24px 36px}.inv-doc-body h3{font-family:Jost,sans-serif;font-size:1rem;font-weight:700;color:var(--g);margin:0 0 12px}.inv-table{width:100%;border-collapse:collapse;font-family:Jost,sans-serif;font-size:.85rem}.inv-table thead tr{background:var(--g);color:#fff}.inv-table thead th{padding:10px 12px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}.inv-table thead th:last-child{text-align:right}.inv-table tbody tr:nth-child(even){background:#f8f8f8}.inv-table tbody td{padding:10px 12px;color:#333;border-bottom:1px solid #eee;vertical-align:top}.inv-table tbody td:last-child{text-align:right;font-weight:600}.inv-table .row-extra td{font-size:.8rem;color:#777;padding:5px 12px 5px 24px}.inv-table .row-extra td:last-child{font-weight:400}.inv-table .row-section td{padding:14px 12px 4px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);font-weight:700;border-bottom:none;background:transparent}.inv-subtotal-row td{padding:10px 12px;color:#555;font-size:.85rem}.inv-subtotal-row td:last-child{font-weight:600;text-align:right}.inv-total-row{background:var(--g)!important}.inv-total-row td{padding:14px 12px;color:#fff;font-weight:700;font-size:1rem;border-bottom:none}.inv-total-row td:last-child{text-align:right;font-size:1.1rem}.inv-doc-footer{padding:24px 36px;border-top:1px solid #eee;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}.inv-footer-section label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);display:block;margin-bottom:8px;font-family:Jost,sans-serif;font-weight:700}.inv-footer-section p{font-size:.78rem;color:#555;line-height:1.7;margin:0;font-family:Jost,sans-serif}.inv-doc-bottom{padding:16px 36px;border-top:1px solid #eee;display:flex;justify-content:space-between}.inv-doc-bottom span{font-size:.72rem;color:var(--gold);font-family:Jost,sans-serif}
 </style>
 </head>
 <body>
@@ -184,10 +167,7 @@ input,textarea,select{font-family:Jost,sans-serif}
     <div class="greeting">Good to see you, <span id="cleaner-greeting"></span>!</div>
     <div class="greeting-sub">Tap below to select the property you’re cleaning today.</div>
   </div>
-  <div class="owner-nav-bar">
-    <button class="owner-nav-btn" onclick="showDashboard()">📋 Team Reports</button>
-    <button class="owner-nav-btn" onclick="showInvoices()">🧾 Invoices</button>
-  </div>
+  
   <div class="sched-wrap">
     <div id="sched-priority-wrap" style="display:none"><div id="sched-priority-list"></div></div>
     <div id="sched-week-wrap" style="display:none">
@@ -278,47 +258,6 @@ input,textarea,select{font-family:Jost,sans-serif}
 </div>
 
 <!-- DASHBOARD VIEW -->
-<div class="view" id="view-dashboard">
-  <div class="dash-wrap" style="padding-top:24px">
-    <button class="back-btn" onclick="goHome()" style="margin-bottom:16px">← Back</button>
-    <div class="dash-header">
-      <div class="dash-title">📋 Team Reports</div>
-      <div class="dash-sub">Issues &amp; notes from your cleaners</div>
-    </div>
-    <div id="dash-filter-bar">
-      <button class="dash-filter-btn active" onclick="filterIssues('all',event)">All</button>
-      <button class="dash-filter-btn" onclick="filterIssues('week',event)">This week</button>
-      <button class="dash-filter-btn" onclick="filterIssues('month',event)">This month</button>
-    </div>
-    <div id="dash-issues-list"><div class="dash-loading">Loading reports…</div></div>
-  </div>
-</div>
-
-<!-- INVOICES VIEW -->
-<div class="view" id="view-invoices">
-  <div class="dash-wrap" style="padding-top:24px">
-    <button class="back-btn" onclick="goHome()" style="margin-bottom:16px">← Back</button>
-    <div class="dash-header">
-      <div class="dash-title">🧾 Invoice Generator</div>
-      <div class="dash-sub">Generate month-end invoices for property owners</div>
-    </div>
-    <div class="inv-picker-wrap">
-      <label class="inv-label">Select Month</label>
-      <select id="inv-month-sel" class="inv-select"><option value="">Choose a month…</option></select>
-      <button class="inv-gen-btn" onclick="generateInvoices()">Generate Invoices →</button>
-    </div>
-    <div id="inv-output"></div>
-  </div>
-</div>
-
-<!-- INVOICE PRINT VIEW -->
-<div class="view" id="view-invoice-print">
-  <div id="invoice-print-content"></div>
-  <div class="inv-print-actions no-print">
-    <button class="inv-print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
-    <button class="back-btn" onclick="showView('view-invoices')">← Back</button>
-  </div>
-</div>
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUDsON3GhWBoqlTaChyHCWKHutuvT4RFiZpbEUi5dG_-6yMM-GpsGUoMwQP7x922lnYA/exec';
 
@@ -667,124 +606,7 @@ async function submit() {
   document.getElementById('success-sub').innerHTML='<strong>'+prop.name+'</strong> changeover logged successfully.<br>Have a great rest of your day!';
   showView('view-success');
 }
-// ── DASHBOARD ─────────────────────────────────────────────────────────────
-async function showDashboard() {
-  showView('view-dashboard');
-  document.getElementById('dash-issues-list').innerHTML='<div class="dash-loading">Loading reports…</div>';
-  try {
-    const res=await fetch(APPS_SCRIPT_URL+'?action=changeovers');
-    const data=await res.json();
-    _allIssues=data.filter(c=>c.Notes&&c.Notes.trim());
-    renderIssues();
-  } catch(e){document.getElementById('dash-issues-list').innerHTML='<div class="dash-loading">Could not load reports.</div>';}
-}
 
-function filterIssues(f,e) {
-  _issueFilter=f;
-  document.querySelectorAll('.dash-filter-btn').forEach(b=>b.classList.remove('active'));
-  if(e&&e.target)e.target.classList.add('active');
-  renderIssues();
-}
-
-function renderIssues() {
-  const now=new Date();
-  const weekAgo=new Date(now); weekAgo.setDate(now.getDate()-7);
-  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
-  let issues=[..._allIssues].sort((a,b)=>new Date(b.LoggedAt)-new Date(a.LoggedAt));
-  if(_issueFilter==='week')issues=issues.filter(i=>new Date(i.LoggedAt)>=weekAgo);
-  else if(_issueFilter==='month')issues=issues.filter(i=>new Date(i.LoggedAt)>=monthStart);
-  if(!issues.length){document.getElementById('dash-issues-list').innerHTML='<div class="dash-no-issues">No issues reported for this period.</div>';return;}
-  const byProp={};
-  issues.forEach(i=>{if(!byProp[i.Property])byProp[i.Property]=[];byProp[i.Property].push(i);});
-  const sevenAgo=new Date(); sevenAgo.setDate(sevenAgo.getDate()-7);
-  let html='';
-  Object.keys(byProp).sort().forEach(prop=>{
-    html+='<div class="dash-prop-group"><div class="dash-prop-name">'+prop+'</div>';
-    byProp[prop].forEach(issue=>{
-      const d=new Date(issue.LoggedAt);
-      const isNew=d>=sevenAgo;
-      const ds=d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-      html+='<div class="dash-issue-card"><div class="dash-issue-meta"><span class="dash-issue-cleaner">'+(issue.Cleaner||'Unknown')+(isNew?'<span class="dash-new-badge">NEW</span>':'')+'</span><span class="dash-issue-date">'+ds+'</span></div><div class="dash-issue-text">'+issue.Notes.replace(/\n/g,'<br>')+'</div></div>';
-    });
-    html+='</div>';
-  });
-  document.getElementById('dash-issues-list').innerHTML=html;
-}
-
-// ── INVOICES ──────────────────────────────────────────────────────────────
-async function showInvoices() {
-  showView('view-invoices');
-  const sel=document.getElementById('inv-month-sel');
-  sel.innerHTML='<option value="">Choose a month…</option>';
-  const now=new Date();
-  for(let i=0;i<6;i++){
-    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-    const val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-    const label=d.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
-    sel.innerHTML+='<option value="'+val+'">'+label+'</option>';
-  }
-  try{const r=await fetch(APPS_SCRIPT_URL+'?action=changeovers');_allCOs=await r.json();}catch(e){}
-}
-
-function generateInvoices() {
-  const val=document.getElementById('inv-month-sel').value;
-  if(!val){alert('Please select a month');return;}
-  const [year,month]=val.split('-').map(Number);
-  const monthStart=new Date(year,month-1,1);
-  const monthEnd=new Date(year,month,0,23,59,59);
-  const monthLabel=monthStart.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
-  const cos=_allCOs.filter(c=>{const d=new Date(c.LoggedAt);return d>=monthStart&&d<=monthEnd;});
-  if(!cos.length){document.getElementById('inv-output').innerHTML='<div class="inv-no-data">No changeovers found for '+monthLabel+'</div>';return;}
-  const byProp={};
-  cos.forEach(c=>{if(!byProp[c.Property])byProp[c.Property]=[];byProp[c.Property].push(c);});
-  _invoiceData={byProp,year,month,monthLabel};
-  let html='<div style="margin-bottom:12px;font-size:.85rem;color:#888;">'+Object.keys(byProp).length+' properties · '+cos.length+' changeovers</div>';
-  Object.keys(byProp).sort().forEach(prop=>{
-    const pcos=byProp[prop];
-    const total=pcos.reduce((s,c)=>s+(parseFloat(c.Total)||0),0);
-    const oi=OWNER_DATA[prop]||{mgmtFee:null};
-    const mf=oi.mgmtFee||0;
-    const gt=total+mf;
-    html+='<div class="inv-prop-card"><div class="inv-prop-info"><div class="inv-prop-nm">'+prop+'</div><div class="inv-prop-det">'+pcos.length+' clean'+(pcos.length>1?'s':'')+' · £'+total.toFixed(2)+' changeovers'+(mf?' + £'+mf.toFixed(2)+' mgmt fee':'')+'</div><button class="inv-view-btn" onclick="viewInvoice(\''+prop+'\')">View Invoice →</button></div><div class="inv-prop-total">£'+gt.toFixed(2)+'</div></div>';
-  });
-  document.getElementById('inv-output').innerHTML=html;
-}
-
-function viewInvoice(prop) {
-  const {byProp,year,month,monthLabel}=_invoiceData;
-  const cos=byProp[prop];
-  const oi=OWNER_DATA[prop]||{owner:prop+' — Owner',address:'',ref:prop.substring(0,3).toUpperCase(),mgmtFee:null};
-  const now=new Date();
-  const invNum='EPM-'+String(year).substring(2)+String(month).padStart(2,'0')+'-'+oi.ref;
-  const dateStr=now.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
-  let rows='', coTotal=0;
-  cos.forEach(c=>{
-    const rate=parseFloat((c.Rate||'').toString().replace('£',''))||0;
-    const ext=parseFloat(c.ExtrasTotal)||0;
-    coTotal+=rate+ext;
-    const desc=c.Guest==='Owner booking'?c.StayType+' — Owner':c.StayType;
-    const nights=c.Nights?c.Nights+' night'+(c.Nights>1?'s':''):'';
-    rows+='<tr><td><strong>'+desc+'</strong><br><span style="font-size:.78rem;color:#888;">'+(c.Dates||'')+'</span></td><td>'+nights+'</td><td>£'+rate.toFixed(2)+'</td></tr>';
-    if(c.Extras){c.Extras.split(',').forEach(ex=>{const n=ex.trim();if(!n)return;const po=PROPERTIES.find(p=>p.name===prop);const eo=po?po.extras.find(e=>e.name===n):null;const ep=eo?eo.price:0;rows+='<tr class="row-extra"><td>'+n+' ×1</td><td></td><td>'+(ep?'£'+ep.toFixed(2):'—')+'</td></tr>';});}
-  });
-  const mf=oi.mgmtFee||0; const gt=coTotal+mf;
-  const addrLines=(oi.address||'').split('\n').join('<br>');
-  document.getElementById('invoice-print-content').innerHTML=
-    '<div class="invoice-doc">'+
-    '<div class="inv-doc-header"><div class="inv-doc-company"><div class="inv-doc-company-name">Evans Property Management</div><div class="inv-doc-company-sub">Holiday Let Management · West Wales</div></div><div class="inv-doc-title">Invoice</div></div>'+
-    '<div class="inv-doc-meta"><div class="inv-doc-meta-item"><label>Invoice</label><strong>'+invNum+'</strong></div><div class="inv-doc-meta-item"><label>Date</label><strong>'+dateStr+'</strong></div><div class="inv-doc-meta-item"><label>Period</label><strong>'+monthLabel+'</strong></div><div class="inv-doc-meta-item"><label>Due</label><strong>Within 7 days</strong></div></div>'+
-    '<div class="inv-doc-parties"><div class="inv-party"><label>From</label><strong>Evans Property Management</strong><p>Llanboidy<br>Carmarthenshire<br>SA34 0EU<br>Evandaviespropertymanagement@gmail.com<br>07398 074688</p></div><div class="inv-party"><label>Billed To</label><strong>'+oi.owner+'</strong><p>'+addrLines+'</p></div><div class="inv-party"><label>Property</label><strong>'+prop+'</strong></div></div>'+
-    '<div class="inv-doc-body"><h3>Management statement for '+monthLabel+'</h3><table class="inv-table"><thead><tr><th>Description</th><th>Detail</th><th>Amount</th></tr></thead><tbody>'+rows+
-    '<tr class="row-section"><td colspan="3">Management Fee</td></tr>'+
-    '<tr class="inv-subtotal-row"><td>Changeovers &amp; extras</td><td>Monthly</td><td>£'+coTotal.toFixed(2)+'</td></tr>'+
-    (mf?'<tr class="inv-subtotal-row"><td>Management fee</td><td></td><td>£'+mf.toFixed(2)+'</td></tr>':'')+
-    '<tr class="inv-total-row"><td colspan="2"><strong>Total Due</strong></td><td><strong>£'+gt.toFixed(2)+'</strong></td></tr>'+
-    '</tbody></table></div>'+
-    '<div class="inv-doc-footer"><div class="inv-footer-section"><label>Payment Details</label><p>Monzo-Evans Property Man<br>Sort code: 04-00-03<br>Account: 94071903<br>Ref: '+invNum+'</p></div><div class="inv-footer-section"><label>Terms</label><p>Payment to be kindly made within 7 days of issue date via BACS.</p></div><div class="inv-footer-section"><label>Notes</label><p>VAT is not applicable — Evans Property Management is not VAT registered.</p></div></div>'+
-    '<div class="inv-doc-bottom"><span>Evans Property Management · VAT not applicable</span><span>Thank you for trusting us with your property.</span></div>'+
-    '</div>';
-  showView('view-invoice-print');
-}
 </script>
 </body>
 </html>
