@@ -3,9 +3,788 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>EPM_PLACEHOLDER</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>EPM · Changeover Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--g:#1E3D2F;--gold:#B89A5A;--red:#8B3A2A;--bg:#F4F7F5;--text:#1a1a1a;--border:#e2e8e4;--radius:12px;--shadow:0 2px 12px rgba(0,0,0,.08)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Jost,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button{font-family:Jost,sans-serif;cursor:pointer}
+input,textarea,select{font-family:Jost,sans-serif}
+.view{display:none;min-height:100vh;padding-bottom:40px}
+.view.active{display:block}
+#hero-wrap{position:relative;height:420px;overflow:hidden;background:#1E3D2F}
+.hero-img{width:100%;height:100%;object-fit:cover;opacity:.7}
+.hero-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.hero-title{font-size:2.4rem;font-weight:700;color:#fff;text-align:center;line-height:1.2;letter-spacing:-.02em}
+.hero-title em{font-style:italic;color:var(--gold);font-weight:300}
+#hdr-date{font-size:.8rem;color:rgba(255,255,255,.75);letter-spacing:.05em}
+.powered-badge{display:flex;align-items:center;gap:8px;margin-top:4px}
+.powered-badge img{width:32px;height:32px;border-radius:6px}
+.powered-text{font-size:.65rem;font-weight:700;letter-spacing:.12em;color:rgba(255,255,255,.6);text-transform:uppercase}
+#compact-hdr{background:var(--g);padding:16px 20px;text-align:center;display:none}
+.compact-title{font-size:1.2rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.compact-title em{font-style:italic;color:var(--gold);font-weight:300}
+#compact-gold{height:3px;background:var(--gold);display:none}
+.page-wrap{max-width:540px;margin:0 auto;padding:32px 20px}
+.welcome-title{font-size:1.8rem;font-weight:700;color:var(--g);margin-bottom:6px}
+.welcome-sub{font-size:.95rem;color:#888;margin-bottom:28px}
+.field-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;display:block;margin-bottom:8px}
+.text-input{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:1rem;background:#fff;transition:border .2s}
+.text-input:focus{outline:none;border-color:var(--g)}
+.primary-btn{width:100%;padding:16px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:16px;transition:opacity .2s}
+.primary-btn:active{opacity:.8}
+.props-header{max-width:540px;margin:0 auto;padding:24px 20px 0}
+.greeting{font-size:1.4rem;font-weight:700;color:var(--g);margin-bottom:4px}
+.greeting-sub{font-size:.88rem;color:#888;margin-bottom:20px}
+.owner-nav-bar{display:flex;gap:10px;margin-bottom:20px;max-width:540px;margin-left:auto;margin-right:auto;padding:0 20px}
+.owner-nav-btn{flex:1;padding:12px 8px;background:#fff;border:1.5px solid var(--border);border-radius:10px;font-family:Jost,sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g);cursor:pointer;text-align:center;transition:all .15s}
+.owner-nav-btn:active{background:var(--g);color:#fff;border-color:var(--g)}
+.sched-wrap{max-width:540px;margin:0 auto;padding:0 20px}
+.priority-banner{background:#fff0ed;border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.priority-banner-icon{font-size:1.1rem}
+.priority-banner-title{font-size:.82rem;font-weight:700;color:var(--red);margin-bottom:6px}
+.priority-banner-chips{display:flex;flex-wrap:wrap;gap:6px}
+.priority-chip{background:var(--red);color:#fff;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
+.sched-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g);display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.sched-dot{width:7px;height:7px;border-radius:50%;background:var(--g);display:inline-block}
+.day-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.day-strip::-webkit-scrollbar{display:none}
+.day-bubble{min-width:54px;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center;cursor:default;transition:all .15s;flex-shrink:0}
+.day-bubble.today-marker{border-color:var(--g);background:#f0f5f2}
+.day-bubble.has-co{border-color:var(--g);background:#fff;cursor:pointer}
+.day-bubble.same-day{border-color:var(--red);background:#fff0ed;cursor:pointer}
+.day-name{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa}
+.day-num{font-size:1.1rem;font-weight:700;color:var(--g);line-height:1.2}
+.day-bubble.same-day .day-num{color:var(--red)}
+.day-dots{display:flex;justify-content:center;gap:3px;min-height:8px;margin-top:4px}
+.day-dot{width:6px;height:6px;border-radius:50%;background:var(--g)}
+.day-dot.in{background:var(--gold)}
+.day-peek{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:14px;margin-top:8px;display:none;box-shadow:var(--shadow)}
+.day-peek.red{border-color:var(--red)}
+.peek-section{margin-bottom:8px}
+.peek-section:last-child{margin-bottom:0}
+.peek-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.peek-label.out{color:var(--g)}
+.peek-label.in{color:var(--gold)}
+.peek-label.priority{color:var(--red)}
+.peek-props{font-size:.82rem;color:#444;line-height:1.8}
+.sched-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+#show-props-btn{width:calc(100% - 40px);max-width:500px;display:block;margin:0 auto;padding:16px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.prop-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:540px;margin:0 auto;padding:0 20px}
+.prop-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s;border:1.5px solid transparent}
+.prop-card:active{transform:scale(.97)}
+.prop-card.today{border-color:var(--g)}
+.prop-stripe{height:4px;background:var(--g)}
+.prop-card.today .prop-stripe{background:var(--gold)}
+.prop-inner{padding:14px}
+.prop-avatar{width:36px;height:36px;border-radius:8px;background:var(--g);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.prop-name{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.prop-footer{display:flex;justify-content:space-between;align-items:center}
+.today-pill{background:var(--gold);color:#fff;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+.prop-arrow{font-size:1.1rem;color:#ccc}
+.co-wrap{max-width:540px;margin:0 auto;padding:20px}
+.co-prop-name{font-size:1.4rem;font-weight:700;color:var(--g)}
+.co-date{font-size:.82rem;color:#888;margin-bottom:20px}
+.section-card{background:#fff;border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g);margin-bottom:12px}
+.booking-opt{border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.booking-opt.sel{border-color:var(--g);background:#f0f5f2}
+.booking-opt-guest{font-weight:700;font-size:.9rem;color:var(--text)}
+.booking-opt-detail{font-size:.78rem;color:#888;margin-top:2px}
+.no-booking-note{font-size:.85rem;color:#888;padding:4px 0}
+.manual-fields{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.manual-link{font-size:.8rem;color:var(--g);text-decoration:underline;cursor:pointer;margin-top:4px;display:inline-block}
+.extras-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.ex-chip{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;transition:all .15s;background:#fff}
+.ex-chip.on{border-color:var(--g);background:#f0f5f2}
+.ex-chip-tick{width:16px;height:16px;border-radius:4px;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:transparent;transition:all .15s}
+.ex-chip.on .ex-chip-tick{border-color:var(--g);background:var(--g);color:#fff}
+.ex-chip-name{font-size:.82rem;font-weight:600}
+.allinc-note{background:#f0f5f2;border-radius:8px;padding:10px 12px;font-size:.82rem;color:var(--g)}
+.purchased-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem}
+.purchased-rm{color:#aaa;cursor:pointer;font-size:1.1rem;padding:0 4px}
+.purchased-form{display:flex;gap:8px;margin-top:10px}
+.purchased-form input{flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem}
+.purchased-form input:focus{outline:none;border-color:var(--g)}
+.purchased-form .add-btn{padding:10px 14px;background:var(--g);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;white-space:nowrap}
+.add-purchase-btn{background:none;border:1.5px dashed var(--border);border-radius:8px;padding:10px;width:100%;color:#888;font-size:.82rem;margin-top:6px}
+.hours-row{display:flex;gap:10px;align-items:center}
+.hours-input{width:80px;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;text-align:center}
+.hours-input:focus{outline:none;border-color:var(--g)}
+.notes-area{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;resize:none;min-height:80px;margin-top:10px}
+.notes-area:focus{outline:none;border-color:var(--g)}
+.proceed-btn{width:100%;padding:16px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:8px}
+.back-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:10px 16px;color:#888;font-size:.82rem;cursor:pointer}
+.sum-card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.sum-hd{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:14px}
+.sum-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:.88rem}
+.sum-row:last-child{border-bottom:none}
+.sum-row .lbl{color:#888}
+.sum-row .val{font-weight:600;color:var(--text);text-align:right;max-width:60%}
+.submit-btn{width:100%;padding:16px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.edit-btn{width:100%;padding:12px;background:none;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.85rem;color:#888;margin-top:8px}
+.success-wrap{max-width:540px;margin:0 auto;padding:40px 20px;text-align:center}
+.success-icon{font-size:3rem;margin-bottom:16px}
+.success-title{font-size:1.4rem;font-weight:700;color:var(--g);margin-bottom:8px}
+.success-sub{font-size:.9rem;color:#888;margin-bottom:32px}
+.success-actions{display:flex;flex-direction:column;gap:10px}
+.log-another-btn{padding:14px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.done-btn{padding:14px;background:none;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.85rem;color:#888}
+
+/* ── Dashboard / Issues ───────────────────────────────── */
+.dash-wrap{max-width:540px;margin:0 auto;padding:0 20px 40px}.dash-header{margin-bottom:20px}.dash-title{font-size:1.4rem;font-weight:700;color:var(--g)}.dash-sub{font-size:.85rem;color:#888;margin-top:2px}#dash-filter-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}.dash-filter-btn{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-family:Jost,sans-serif;font-size:.8rem;font-weight:600;color:#555;cursor:pointer;text-transform:uppercase;letter-spacing:.05em}.dash-filter-btn.active{background:var(--g);border-color:var(--g);color:#fff}.dash-loading{color:#aaa;font-size:.9rem;padding:20px 0}.dash-prop-group{margin-bottom:20px}.dash-prop-name{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #e8e0d0}.dash-issue-card{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:8px;border-left:3px solid var(--g);box-shadow:0 1px 4px rgba(0,0,0,.06)}.dash-issue-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.dash-issue-cleaner{font-size:.75rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.05em}.dash-issue-date{font-size:.72rem;color:#aaa}.dash-issue-text{font-size:.88rem;color:#333;line-height:1.5}.dash-no-issues{text-align:center;padding:40px 20px;color:#aaa;font-size:.9rem}.dash-new-badge{background:var(--gold);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.05em;margin-left:6px;vertical-align:middle}
+
+/* ── Invoice picker ───────────────────────────────────── */
+.inv-picker-wrap{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 6px rgba(0,0,0,.07)}.inv-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;display:block;margin-bottom:8px}.inv-select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:Jost,sans-serif;font-size:1rem;color:#333;background:#fafafa;margin-bottom:14px}.inv-gen-btn{width:100%;padding:14px;background:var(--g);color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.inv-prop-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);display:flex;justify-content:space-between;align-items:center}.inv-prop-info .inv-prop-nm{font-weight:700;color:var(--g);font-size:1rem}.inv-prop-info .inv-prop-det{font-size:.8rem;color:#888;margin-top:2px}.inv-prop-total{font-size:1.1rem;font-weight:700;color:var(--g)}.inv-view-btn{background:var(--g);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:Jost,sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;letter-spacing:.05em;text-transform:uppercase;margin-top:8px}.inv-no-data{color:#aaa;font-size:.9rem;padding:20px 0;text-align:center}
+
+/* ── Print actions ───────────────────────────────────── */
+.inv-print-actions{max-width:540px;margin:0 auto;padding:16px;display:flex;gap:12px}.inv-print-btn{flex:1;padding:14px;background:var(--g);color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer}
+
+/* ── Print media ─────────────────────────────────────── */
+@media print{.no-print{display:none!important}#compact-hdr,#compact-gold,.view:not(#view-invoice-print){display:none!important}#view-invoice-print{display:block!important}body{background:#fff!important}}
+
+/* ── Invoice document ─────────────────────────────────── */
+.invoice-doc{max-width:740px;margin:0 auto;background:#fff;font-family:'Georgia',serif;color:#222}.inv-doc-header{background:var(--g);color:#fff;padding:32px 36px 24px;display:flex;justify-content:space-between;align-items:flex-start}.inv-doc-company{font-family:Jost,sans-serif}.inv-doc-company-name{font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:-.01em}.inv-doc-company-sub{font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}.inv-doc-title{font-size:2rem;font-weight:700;color:var(--gold);font-family:Jost,sans-serif}.inv-doc-meta{padding:24px 36px;border-bottom:1px solid #eee;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.inv-doc-meta-item label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#aaa;display:block;margin-bottom:4px;font-family:Jost,sans-serif}.inv-doc-meta-item strong{font-size:.95rem;font-weight:700;color:var(--g);font-family:Jost,sans-serif;display:block}.inv-doc-parties{padding:24px 36px;border-bottom:1px solid #eee;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}.inv-party label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#aaa;display:block;margin-bottom:6px;font-family:Jost,sans-serif}.inv-party strong{font-size:.9rem;font-weight:700;color:#222;display:block;margin-bottom:4px;font-family:Jost,sans-serif}.inv-party p{font-size:.82rem;color:#555;line-height:1.6;margin:0;font-family:Jost,sans-serif}.inv-doc-body{padding:24px 36px}.inv-doc-body h3{font-family:Jost,sans-serif;font-size:1rem;font-weight:700;color:var(--g);margin:0 0 12px}.inv-table{width:100%;border-collapse:collapse;font-family:Jost,sans-serif;font-size:.85rem}.inv-table thead tr{background:var(--g);color:#fff}.inv-table thead th{padding:10px 12px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}.inv-table thead th:last-child{text-align:right}.inv-table tbody tr:nth-child(even){background:#f8f8f8}.inv-table tbody td{padding:10px 12px;color:#333;border-bottom:1px solid #eee;vertical-align:top}.inv-table tbody td:last-child{text-align:right;font-weight:600}.inv-table .row-extra td{font-size:.8rem;color:#777;padding:5px 12px 5px 24px}.inv-table .row-extra td:last-child{font-weight:400}.inv-table .row-section td{padding:14px 12px 4px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);font-weight:700;border-bottom:none;background:transparent}.inv-subtotal-row td{padding:10px 12px;color:#555;font-size:.85rem}.inv-subtotal-row td:last-child{font-weight:600;text-align:right}.inv-total-row{background:var(--g)!important}.inv-total-row td{padding:14px 12px;color:#fff;font-weight:700;font-size:1rem;border-bottom:none}.inv-total-row td:last-child{text-align:right;font-size:1.1rem}.inv-doc-footer{padding:24px 36px;border-top:1px solid #eee;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}.inv-footer-section label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);display:block;margin-bottom:8px;font-family:Jost,sans-serif;font-weight:700}.inv-footer-section p{font-size:.78rem;color:#555;line-height:1.7;margin:0;font-family:Jost,sans-serif}.inv-doc-bottom{padding:16px 36px;border-top:1px solid #eee;display:flex;justify-content:space-between}.inv-doc-bottom span{font-size:.72rem;color:var(--gold);font-family:Jost,sans-serif}
+</style>
 </head>
 <body>
-<p>Test upload successful</p>
+
+<div id="hero-wrap">
+  <img class="hero-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80" alt="Wales landscape">
+  <div class="hero-overlay">
+    <div class="hero-title">Evans <em>Property<br>Management</em></div>
+    <div id="hdr-date"></div>
+    <div class="powered-badge">
+      <img src="https://staygentic.com/favicon.ico" alt="Staygentic" onerror="this.style.display='none'">
+      <span class="powered-text">Powered by Staygentic</span>
+    </div>
+  </div>
+</div>
+<div id="compact-hdr"><div class="compact-title">Evans <em>Property Management</em></div></div>
+<div id="compact-gold"></div>
+
+<!-- NAME VIEW -->
+<div class="view active" id="view-name">
+  <div class="page-wrap">
+    <div class="welcome-title">Welcome!</div>
+    <div class="welcome-sub">Enter your name to get started</div>
+    <label class="field-label" for="cleaner-name">Your Name</label>
+    <input class="text-input" id="cleaner-name" type="text" placeholder="e.g. Sarah" autocomplete="off">
+    <button class="primary-btn" onclick="setName()">Continue →</button>
+  </div>
+</div>
+
+<!-- PROPS VIEW -->
+<div class="view" id="view-props">
+  <div class="props-header">
+    <div class="greeting">Good to see you, <span id="cleaner-greeting"></span>!</div>
+    <div class="greeting-sub">Tap below to select the property you’re cleaning today.</div>
+  </div>
+  <div class="owner-nav-bar">
+    <button class="owner-nav-btn" onclick="showDashboard()">📋 Team Reports</button>
+    <button class="owner-nav-btn" onclick="showInvoices()">🧾 Invoices</button>
+  </div>
+  <div class="sched-wrap">
+    <div id="sched-priority-wrap" style="display:none"><div id="sched-priority-list"></div></div>
+    <div id="sched-week-wrap" style="display:none">
+      <div class="sched-section-label"><span class="sched-dot"></span> This Week’s Changeovers</div>
+      <div style="font-size:.72rem;color:#888;margin-bottom:8px;display:flex;gap:12px;align-items:center">
+        <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--g);margin-right:4px;vertical-align:middle"></span>Checkout</span>
+        <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:4px;vertical-align:middle"></span>Check-in</span>
+        <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:4px;vertical-align:middle"></span>Same day</span>
+      </div>
+      <div class="day-strip" id="sched-day-strip"></div>
+      <div class="day-peek" id="day-peek"></div>
+    </div>
+    <hr class="sched-divider" id="sched-divider" style="display:none">
+  </div>
+  <button id="show-props-btn" onclick="showPropList()">Select Your Clean Today</button>
+  <div id="prop-list-wrap" style="display:none"></div>
+</div>
+
+<!-- CHANGEOVER VIEW -->
+<div class="view" id="view-co">
+  <div class="co-wrap">
+    <button class="back-btn" onclick="goHome()" style="margin-bottom:16px">← Back</button>
+    <div class="co-prop-name" id="co-name"></div>
+    <div class="co-date" id="co-date"></div>
+    <div class="section-card" id="sec-bookings" style="display:none">
+      <div class="section-title">Today’s Booking</div>
+      <div id="booking-opts"></div>
+      <div id="manual-fields-wrap" style="display:none">
+        <div class="manual-fields">
+          <div><label class="field-label">Guest name</label><input class="text-input" id="m-guest" placeholder="Guest name"></div>
+          <div><label class="field-label">Dates</label><input class="text-input" id="m-dates" placeholder="e.g. 01/04 – 07/04"></div>
+          <div><label class="field-label">Nights</label><input class="text-input" id="m-nights" type="number" min="0" placeholder="0" oninput="afterBookingSelection()"></div>
+        </div>
+      </div>
+      <span class="manual-link" onclick="showManual()">Enter manually</span>
+    </div>
+    <div class="section-card" id="sec-extras" style="display:none">
+      <div class="section-title">Items Used</div>
+      <div id="allinc-note" style="display:none"></div>
+      <div class="extras-grid" id="extras-grid"></div>
+    </div>
+    <div class="section-card" id="sec-extras2" style="display:none">
+      <div class="section-title">Have You Purchased Anything?</div>
+      <p style="font-size:.82rem;color:#888;margin-bottom:10px">If you bought something for the property (e.g. hand soap, batteries, cleaning supplies) add it below with what you paid.</p>
+      <div id="purchased-list"></div>
+      <button class="add-purchase-btn" onclick="showPurchased()">+ Add purchased item</button>
+      <div id="purchased-wrap" style="display:none;margin-top:10px">
+        <div class="purchased-form">
+          <input id="pu-desc" placeholder="Item" type="text">
+          <input id="pu-cost" placeholder="Cost (£)" type="number" step="0.01" min="0" style="max-width:90px">
+          <button class="add-btn" onclick="addPurchased()">Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="section-card" id="sec-hours" style="display:none">
+      <div class="section-title">Hours &amp; Notes</div>
+      <label class="field-label">Hours spent on clean</label>
+      <div class="hours-row"><input class="hours-input" id="co-hours" type="number" step="0.25" min="0" placeholder="0"></div>
+      <label class="field-label" style="margin-top:14px">Notes (optional)</label>
+      <textarea class="notes-area" id="co-notes" placeholder="Any issues, items needed, things to flag…" rows="3"></textarea>
+    </div>
+    <button class="proceed-btn" id="proceed-btn" onclick="goToSummary()" style="display:none">Review →</button>
+  </div>
+</div>
+
+<!-- SUMMARY VIEW -->
+<div class="view" id="view-summary">
+  <div class="co-wrap">
+    <button class="back-btn" onclick="showView('view-co')" style="margin-bottom:16px">← Back</button>
+    <p style="font-size:.85rem;color:#888;margin-bottom:14px">Looks good? Check everything is right before submitting</p>
+    <div id="sum-card"></div>
+    <button class="submit-btn" id="submit-btn" onclick="submit()">✓ Submit</button>
+    <button class="edit-btn" onclick="showView('view-co')">Edit</button>
+  </div>
+</div>
+
+<!-- SUCCESS VIEW -->
+<div class="view" id="view-success">
+  <div class="success-wrap">
+    <div class="success-icon">🏡</div>
+    <div class="success-title">Thank you!</div>
+    <div class="success-sub" id="success-sub"></div>
+    <div class="success-actions">
+      <button class="log-another-btn" onclick="logAnother()">Log Another</button>
+      <button class="done-btn" onclick="goHome()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div class="view" id="view-dashboard">
+  <div class="dash-wrap" style="padding-top:24px">
+    <button class="back-btn" onclick="goHome()" style="margin-bottom:16px">← Back</button>
+    <div class="dash-header">
+      <div class="dash-title">📋 Team Reports</div>
+      <div class="dash-sub">Issues &amp; notes from your cleaners</div>
+    </div>
+    <div id="dash-filter-bar">
+      <button class="dash-filter-btn active" onclick="filterIssues('all',event)">All</button>
+      <button class="dash-filter-btn" onclick="filterIssues('week',event)">This week</button>
+      <button class="dash-filter-btn" onclick="filterIssues('month',event)">This month</button>
+    </div>
+    <div id="dash-issues-list"><div class="dash-loading">Loading reports…</div></div>
+  </div>
+</div>
+
+<!-- INVOICES VIEW -->
+<div class="view" id="view-invoices">
+  <div class="dash-wrap" style="padding-top:24px">
+    <button class="back-btn" onclick="goHome()" style="margin-bottom:16px">← Back</button>
+    <div class="dash-header">
+      <div class="dash-title">🧾 Invoice Generator</div>
+      <div class="dash-sub">Generate month-end invoices for property owners</div>
+    </div>
+    <div class="inv-picker-wrap">
+      <label class="inv-label">Select Month</label>
+      <select id="inv-month-sel" class="inv-select"><option value="">Choose a month…</option></select>
+      <button class="inv-gen-btn" onclick="generateInvoices()">Generate Invoices →</button>
+    </div>
+    <div id="inv-output"></div>
+  </div>
+</div>
+
+<!-- INVOICE PRINT VIEW -->
+<div class="view" id="view-invoice-print">
+  <div id="invoice-print-content"></div>
+  <div class="inv-print-actions no-print">
+    <button class="inv-print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+    <button class="back-btn" onclick="showView('view-invoices')">← Back</button>
+  </div>
+</div>
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUDsON3GhWBoqlTaChyHCWKHutuvT4RFiZpbEUi5dG_-6yMM-GpsGUoMwQP7x922lnYA/exec';
+
+const PROPERTIES = [
+  { id:'maes-dyfed', name:'Maes Dyfed', ref:'MD', rateType:'split', rateShort:130, rateLong:170, threshold:4, mgmtFee:80, extras:[{name:'Bins',price:10},{name:'Bara Brith',price:2.99},{name:'Toilet Rolls',price:8.60},{name:'Lawns',price:25},{name:'Logs',price:7.00}] },
+  { id:'arosfa', name:'Arosfa', ref:'A', rateType:'split', rateShort:130, rateLong:170, threshold:4, mgmtFee:99, extras:[{name:'Bins',price:10},{name:'Welcome Pack',price:10}] },
+  { id:'teifi-view', name:'Teifi View', ref:'TV', rateType:'split', rateShort:110, rateLong:130, threshold:4, extras:[] },
+  { id:'ty-gladys', name:'Ty Gladys', ref:'TG', rateType:'split', rateShort:125, rateLong:160, threshold:4, mgmtFee:79, extras:[{name:'Bins',price:10},{name:'Welcome Pack',price:10},{name:'Windows',price:25}] },
+  { id:'ty-eufron', name:'Ty Eufron', ref:'TE', rateType:'split', rateShort:150, rateLong:180, threshold:4, mgmtFee:79, extras:[{name:'Bins',price:10},{name:'Welcome Pack',price:10}] },
+  { id:'brynhowell', name:'Brynhowell', ref:'BFH', rateType:'flat', rateFlat:250, extras:[] },
+  { id:'stambar', name:'Stambar', ref:'STB', rateType:'flat', rateFlat:140, extras:[] },
+  { id:'ty-pinc', name:'Ty Pinc', ref:'TP', rateType:'flat', rateFlat:130, extras:[{name:'Welcome Pack',price:10}] },
+  { id:'cwm-hyfryd', name:'Cwm Hyfryd', ref:'CH', rateType:'allinc', rateFlat:260, extras:[] }
+];
+
+const OWNER_DATA = {
+  'Maes Dyfed': { owner:'Maes Dyfed — Owner', address:'', ref:'MD', mgmtFee:80 },
+  'Arosfa':     { owner:'Arosfa — Owner',     address:'', ref:'A',  mgmtFee:99 },
+  'Teifi View': { owner:'Teifi View — Owner', address:'', ref:'TV', mgmtFee:null },
+  'Ty Gladys':  { owner:'Ty Gladys — Owner',  address:'', ref:'TG', mgmtFee:79 },
+  'Ty Eufron':  { owner:'Ty Eufron — Huw Reynolds', address:'Ty Eufron\nSquare & Compass\nSA62 5JJ', ref:'TE', mgmtFee:79 },
+  'Brynhowell': { owner:'Brynhowell — Owner', address:'', ref:'BFH', mgmtFee:null },
+  'Stambar':    { owner:'Stambar — Owner',    address:'', ref:'STB', mgmtFee:null },
+  'Ty Pinc':    { owner:'Ty Pinc — Owner',    address:'', ref:'TP',  mgmtFee:null },
+  'Cwm Hyfryd': { owner:'Cwm Hyfryd — Owner', address:'', ref:'CH', mgmtFee:null },
+};
+
+let cleanerName = localStorage.getItem('epm_cleaner') || '';
+let bookings = JSON.parse(localStorage.getItem('epm_bookings') || '[]');
+let prop = null, booking = null, stayType = null;
+let selExtras = [], adhocItems = [], isManual = false;
+let _allIssues = [], _issueFilter = 'all';
+let _allCOs = [], _invoiceData = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  if (cleanerName) {
+    document.getElementById('cleaner-greeting').textContent = cleanerName;
+    loadBookings();
+    showView('view-props');
+  }
+});
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  const onName = id === 'view-name';
+  document.getElementById('hero-wrap').style.display = onName ? 'block' : 'none';
+  document.getElementById('compact-hdr').style.display = onName ? 'none' : 'block';
+  document.getElementById('compact-gold').style.display = onName ? 'none' : 'block';
+}
+
+function showPropList() {
+  document.getElementById('show-props-btn').style.display = 'none';
+  document.getElementById('prop-list-wrap').style.display = 'block';
+  renderProps();
+}
+
+async function loadBookings() {
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?action=bookings');
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      bookings = data.map(b => ({
+        id: b.ID||b.id, property: b.Property||b.property, guest: b.Guest||b.guest,
+        start: normaliseDate(b.Start||b.start||''), end: normaliseDate(b.End||b.end||b.Departure||''),
+        nights: parseInt(b.Nights||b.nights)||0, ref: b.Ref||b.ref||'',
+        isOwner: (b.IsOwner||b.isOwner||'').toString().toLowerCase()==='yes'||b.isOwner===true,
+      }));
+      localStorage.setItem('epm_bookings', JSON.stringify(bookings));
+    }
+  } catch(e) { console.log('Bookings fetch failed, using cached:', e.message); }
+  renderProps();
+}
+
+function normaliseDate(d) {
+  if (!d) return '';
+  d = d.toString().trim();
+  if (/^\d{8}$/.test(d)) return d;
+  const m = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return m[3]+m[2].padStart(2,'0')+m[1].padStart(2,'0');
+  const iso = d.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return iso[1]+iso[2]+iso[3];
+  return d;
+}
+
+function goHome() {
+  reset();
+  document.getElementById('show-props-btn').style.display = 'block';
+  document.getElementById('prop-list-wrap').style.display = 'none';
+  loadBookings();
+  showView('view-props');
+}
+
+function logAnother() { reset(); showView('view-props'); renderProps(); }
+
+function reset() { prop=null; booking=null; stayType=null; selExtras=[]; adhocItems=[]; isManual=false; }
+
+function setName() {
+  const n = document.getElementById('cleaner-name').value.trim();
+  if (!n) { document.getElementById('cleaner-name').focus(); return; }
+  cleanerName = n;
+  localStorage.setItem('epm_cleaner', n);
+  document.getElementById('cleaner-greeting').textContent = n;
+  loadBookings();
+  showView('view-props');
+}
+
+function getTodayStr() {
+  const d = new Date();
+  return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+}
+
+function fmtDate(s) {
+  if (!s) return '';
+  const c = s.toString().replace(/[-\/]/g,'');
+  if (c.length < 8) return s;
+  return c.substr(6,2)+'/'+c.substr(4,2)+'/'+c.substr(0,4);
+}
+
+function sid(s) { return s.toLowerCase().replace(/[^a-z0-9]/g,'-'); }
+
+function renderProps() {
+  const today = getTodayStr();
+  const wrap = document.getElementById('prop-list-wrap');
+  wrap.innerHTML = '<div class="prop-list">'+PROPERTIES.map(p => {
+    const hasToday = bookings.some(b => {
+      const bprop = (b.property||'').toLowerCase().replace(/\s+/g,'');
+      const pprop = p.name.toLowerCase().replace(/\s+/g,'');
+      return bprop===pprop && normaliseDate(b.end||'')===today;
+    });
+    const initials = p.name.split(' ').map(w=>w[0]).join('').substring(0,3).toUpperCase();
+    return '<div class="prop-card'+(hasToday?' today':'')+'" onclick="selProp(\''+p.id+'\')"><div class="prop-stripe"></div><div class="prop-inner"><div class="prop-avatar">'+initials+'</div><div class="prop-name">'+p.name+'</div><div class="prop-footer">'+(hasToday?'<span class="today-pill">Today</span>':'<span></span>')+'<span class="prop-arrow">›</span></div></div></div>';
+  }).join('')+'</div>';
+  renderSchedule();
+}
+function renderSchedule() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const fortEnd = new Date(today); fortEnd.setDate(today.getDate()+13);
+  function toDate(s) { const c=normaliseDate(s); if(!c||c.length<8)return null; return new Date(parseInt(c.substr(0,4)),parseInt(c.substr(4,2))-1,parseInt(c.substr(6,2))); }
+  function dayLabel(d) { const diff=Math.round((d-today)/86400000); if(diff===0)return'today'; if(diff===1)return'tomorrow'; return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}); }
+  const weekBookings = bookings.filter(b=>{ const out=toDate(b.end); return out&&out>=today&&out<=fortEnd; });
+  const sameDayCheckouts = weekBookings.filter(checkout=>{ const outStr=normaliseDate(checkout.end); return bookings.some(b=>{ if(b.id===checkout.id)return false; const bprop=(b.property||'').toLowerCase().replace(/\s+/g,''); const cprop=(checkout.property||'').toLowerCase().replace(/\s+/g,''); return normaliseDate(b.start)===outStr&&bprop===cprop; }); });
+  const sameDayIds = new Set(sameDayCheckouts.map(b=>b.id));
+  const priWrap=document.getElementById('sched-priority-wrap');
+  const priList=document.getElementById('sched-priority-list');
+  if(sameDayCheckouts.length){
+    const byDate={};
+    sameDayCheckouts.forEach(b=>{const k=normaliseDate(b.end);if(!byDate[k])byDate[k]=[];byDate[k].push(b.property);});
+    const chips=sameDayCheckouts.map(b=>'<span class="priority-chip">'+b.property+'</span>').join('');
+    const dates=Object.keys(byDate).map(k=>{const d=toDate(k);const diff=Math.round((d-today)/86400000);return diff===0?'today':diff===1?'tomorrow':dayLabel(d);}).filter((v,i,a)=>a.indexOf(v)===i).join(' & ');
+    priList.innerHTML='<div class="priority-banner"><div class="priority-banner-icon">⚡</div><div class="priority-banner-body"><div class="priority-banner-title">Same-day turnaround — '+dates+'</div><div class="priority-banner-chips">'+chips+'</div></div></div>';
+    priWrap.style.display='block';
+  } else { priWrap.style.display='none'; }
+  const weekCheckins=bookings.filter(b=>{const d=toDate(normaliseDate(b.start));return d&&d>=today&&d<=fortEnd;});
+  const weekWrap=document.getElementById('sched-week-wrap');
+  const strip=document.getElementById('sched-day-strip');
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let stripHtml=''; let anyActivity=false;
+  for(let i=0;i<14;i++){
+    const d=new Date(today); d.setDate(today.getDate()+i);
+    const dStr=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+    const outs=weekBookings.filter(b=>normaliseDate(b.end)===dStr);
+    const ins=weekCheckins.filter(b=>normaliseDate(b.start)===dStr);
+    const isSameDay=outs.some(b=>sameDayIds.has(b.id));
+    const hasActivity=outs.length>0||ins.length>0;
+    if(hasActivity)anyActivity=true;
+    const isToday=i===0;
+    const cls=isSameDay?'same-day':hasActivity?'has-co':isToday?'today-marker':'';
+    const peekData=JSON.stringify({outs:outs.map(b=>b.property+(b.isOwner?' (owner)':'')),ins:ins.map(b=>b.property+(b.isOwner?' (owner)':'')),sameDay:isSameDay});
+    const outDots=outs.map(()=>'<div class="day-dot"></div>').join('');
+    const inDots=ins.map(()=>'<div class="day-dot in"></div>').join('');
+    const tapAttr=hasActivity?'onclick="showDayPeek(this)"':'';
+    stripHtml+='<div class="day-bubble'+(cls?' '+cls:'')+'" '+tapAttr+' data-peek=\''+peekData.replace(/'/g,"&#39;")+'\'><div class="day-name">'+dayNames[d.getDay()]+'</div><div class="day-num">'+d.getDate()+'</div><div class="day-dots">'+outDots+inDots+'</div></div>';
+  }
+  strip.innerHTML=stripHtml;
+  weekWrap.style.display=anyActivity?'block':'none';
+  document.getElementById('sched-divider').style.display=anyActivity?'block':'none';
+}
+
+function showDayPeek(el) {
+  const peek=document.getElementById('day-peek');
+  if(peek._active===el&&peek.style.display==='block'){peek.style.display='none';peek._active=null;document.querySelectorAll('.day-bubble').forEach(b=>b.style.outline='');return;}
+  peek._active=el;
+  document.querySelectorAll('.day-bubble').forEach(b=>b.style.outline='');
+  const data=JSON.parse(el.dataset.peek);
+  el.style.outline='2px solid '+(data.sameDay?'var(--red)':'var(--g)');
+  peek.className='day-peek'+(data.sameDay?' red':'');
+  let html='';
+  if(data.sameDay)html+='<div class="peek-section"><div class="peek-label priority">⚠ Same Day Turnaround</div></div>';
+  if(data.outs.length)html+='<div class="peek-section"><div class="peek-label out">↑ Checking out — clean required</div><div class="peek-props">'+data.outs.map(p=>'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--g);margin-right:6px;vertical-align:middle;"></span>'+p).join('<br>')+'</div></div>';
+  if(data.ins.length)html+='<div class="peek-section"><div class="peek-label in">↓ Checking in — must be ready</div><div class="peek-props">'+data.ins.map(p=>'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-right:6px;vertical-align:middle;"></span>'+p).join('<br>')+'</div></div>';
+  peek.innerHTML=html;
+  peek.style.display='block';
+}
+function selProp(id) {
+  prop=PROPERTIES.find(p=>p.id===id);
+  booking=null; stayType=prop.rateType!=='split'?'flat':null; selExtras=[]; adhocItems=[]; isManual=false;
+  document.getElementById('co-name').textContent=prop.name;
+  document.getElementById('co-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  ['sec-extras','sec-extras2','sec-hours'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display='none';});
+  document.getElementById('proceed-btn').style.display='none';
+  document.getElementById('purchased-list').innerHTML='';
+  document.getElementById('purchased-wrap').style.display='none';
+  document.getElementById('co-notes').value='';
+  document.getElementById('co-hours').value='';
+  const today=new Date();
+  const nearby=bookings.filter(b=>{
+    const bprop=(b.property||'').toLowerCase().replace(/\s+/g,'');
+    const pprop=prop.name.toLowerCase().replace(/\s+/g,'');
+    if(bprop!==pprop)return false;
+    const end=normaliseDate(b.end||'');
+    if(!end||end.length<8)return false;
+    const e=new Date(end.substr(0,4),parseInt(end.substr(4,2))-1,parseInt(end.substr(6,2)));
+    const diff=Math.round((e-today)/86400000);
+    return diff>=-1&&diff<=1;
+  });
+  const opts=document.getElementById('booking-opts');
+  if(nearby.length){
+    opts.innerHTML=nearby.map(b=>{
+      const end=normaliseDate(b.end||'');
+      const e=new Date(end.substr(0,4),parseInt(end.substr(4,2))-1,parseInt(end.substr(6,2)));
+      const diff=Math.round((e-today)/86400000);
+      const when=diff===0?'Checks out today':diff===1?'Checks out tomorrow':'Checked out yesterday';
+      const guestLabel=b.isOwner?'🏠 Owner stay':b.guest;
+      return '<div class="booking-opt" id="bopt-'+b.id+'" onclick="selBooking(\''+b.id+'\')"><div class="booking-opt-guest">'+guestLabel+'</div><div class="booking-opt-detail">'+when+' · '+fmtDate(b.start)+' – '+fmtDate(end)+' · '+b.nights+' nights</div></div>';
+    }).join('');
+    document.getElementById('manual-fields-wrap').style.display='none';
+  } else {
+    opts.innerHTML='<div class="no-booking-note">No booking found — logging changeover for today.</div>';
+    isManual=true; afterBookingSelection();
+  }
+  document.getElementById('sec-bookings').style.display='block';
+  showView('view-co');
+}
+
+function selBooking(id) {
+  booking=bookings.find(b=>b.id===id); isManual=false;
+  document.querySelectorAll('.booking-opt').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('bopt-'+id)?.classList.add('sel');
+  afterBookingSelection();
+}
+
+function showManual() {
+  isManual=true; booking=null;
+  document.querySelectorAll('.booking-opt').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('manual-fields-wrap').style.display='block';
+  afterBookingSelection();
+}
+
+function afterBookingSelection() {
+  const nights=booking?parseInt(booking.nights):(parseInt(document.getElementById('m-nights').value)||0);
+  if(prop.rateType==='split'){stayType=nights>=prop.threshold?'long':(nights>0?'short':'short');}
+  else{stayType='flat';}
+  showExtras();
+}
+
+function getBaseRate() {
+  if(prop.rateType==='split')return stayType==='long'?prop.rateLong:prop.rateShort;
+  return prop.rateFlat||0;
+}
+
+function calcTotal() {
+  let total=getBaseRate();
+  selExtras.forEach(name=>{const ex=prop.extras.find(e=>e.name===name);if(ex&&ex.price)total+=ex.price;});
+  return total;
+}
+
+function showExtras() {
+  const note=document.getElementById('allinc-note');
+  if(prop.rateType==='allinc'){note.style.display='block';note.innerHTML='<div class="allinc-note">✓ All-inclusive changeover — linen, bins and welcome pack are all included. Tick any ad-hoc extras below if used.</div>';}
+  else{note.style.display='none';}
+  const grid=document.getElementById('extras-grid');
+  if(prop.extras.length){grid.innerHTML=prop.extras.map(ex=>{const on=selExtras.includes(ex.name);return '<div class="ex-chip'+(on?' on':'')+'" id="chip-'+sid(ex.name)+'" onclick="toggleExtra(\''+ex.name+'\')"><div class="ex-chip-tick">✓</div><div class="ex-chip-name">'+ex.name+'</div></div>';}).join('');}
+  else{grid.innerHTML='';}
+  document.getElementById('sec-extras').style.display='block';
+  document.getElementById('sec-extras2').style.display='block';
+  document.getElementById('sec-hours').style.display='block';
+  document.getElementById('proceed-btn').style.display='block';
+}
+
+function toggleExtra(name) {
+  const idx=selExtras.indexOf(name);
+  if(idx>=0)selExtras.splice(idx,1); else selExtras.push(name);
+  document.getElementById('chip-'+sid(name))?.classList.toggle('on',selExtras.includes(name));
+}
+
+function showPurchased() { document.getElementById('purchased-wrap').style.display='block'; document.getElementById('pu-desc').focus(); }
+
+function addPurchased() {
+  const d=document.getElementById('pu-desc').value.trim();
+  const c=parseFloat(document.getElementById('pu-cost').value)||0;
+  if(!d)return;
+  adhocItems.push({desc:d,cost:c});
+  document.getElementById('pu-desc').value='';
+  document.getElementById('pu-cost').value='';
+  document.getElementById('purchased-wrap').style.display='none';
+  renderPurchasedList();
+}
+
+function renderPurchasedList() {
+  document.getElementById('purchased-list').innerHTML=adhocItems.map((a,i)=>'<div class="purchased-item"><span>'+a.desc+(a.cost?' — £'+a.cost.toFixed(2):'')+'</span><span class="purchased-rm" onclick="adhocItems.splice('+i+',1);renderPurchasedList()">×</span></div>').join('');
+}
+
+function goToSummary() {
+  const guest=isManual?document.getElementById('m-guest').value.trim():(booking?booking.guest:'—');
+  const nights=isManual?(parseInt(document.getElementById('m-nights').value)||0):(booking?booking.nights:0);
+  const startRaw=booking?normaliseDate(booking.start||''):'';
+  const endRaw=booking?normaliseDate(booking.end||''):'';
+  const dates=isManual?document.getElementById('m-dates').value.trim():(startRaw?fmtDate(startRaw)+' – '+fmtDate(endRaw):'—');
+  const extrasRows=selExtras.map(name=>'<div class="sum-row"><span class="lbl">✓ '+name+'</span><span class="val">Used</span></div>').join('')+adhocItems.map(a=>'<div class="sum-row"><span class="lbl">✓ '+a.desc+'</span><span class="val">'+(a.cost?'£'+a.cost.toFixed(2)+' paid':'No cost')+'</span></div>').join('');
+  const hours=document.getElementById('co-hours').value.trim();
+  const notes=document.getElementById('co-notes').value.trim();
+  document.getElementById('sum-card').innerHTML='<div class="sum-hd">Changeover Summary</div><div class="sum-row"><span class="lbl">Property</span><span class="val">'+prop.name+'</span></div><div class="sum-row"><span class="lbl">Guest</span><span class="val">'+guest+'</span></div><div class="sum-row"><span class="lbl">Dates</span><span class="val">'+dates+'</span></div>'+(nights?'<div class="sum-row"><span class="lbl">Nights</span><span class="val">'+nights+'</span></div>':'')+extrasRows+'<div class="sum-row"><span class="lbl">Logged by</span><span class="val">'+cleanerName+'</span></div>'+(hours?'<div class="sum-row"><span class="lbl">Hours</span><span class="val">'+hours+' hrs</span></div>':'')+(notes?'<div class="sum-row"><span class="lbl">Notes</span><span class="val">'+notes+'</span></div>':'');
+  showView('view-summary');
+}
+
+async function submit() {
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true; btn.textContent='Submitting…';
+  const guest=isManual?document.getElementById('m-guest').value.trim():(booking?booking.guest:'—');
+  const nights=isManual?(parseInt(document.getElementById('m-nights').value)||0):(booking?booking.nights:0);
+  const startRaw=booking?normaliseDate(booking.start||''):'';
+  const endRaw=booking?normaliseDate(booking.end||''):'';
+  const dates=isManual?document.getElementById('m-dates').value.trim():(startRaw?fmtDate(startRaw)+' – '+fmtDate(endRaw):'—');
+  const stayLabel=prop.rateType==='split'?(stayType==='short'?'Short':'Long'):prop.rateType==='allinc'?'All-inclusive':'Flat';
+  const baseRate=getBaseRate();
+  const hours=document.getElementById('co-hours').value.trim();
+  const notes=document.getElementById('co-notes').value.trim();
+  const extrasList=selExtras.join(', ');
+  const purchasedList=adhocItems.map(a=>a.desc+(a.cost?' £'+a.cost.toFixed(2):'')).join(', ');
+  const extrasTotal=selExtras.reduce((s,name)=>{const ex=prop.extras.find(e=>e.name===name);return s+(ex&&ex.price?ex.price:0);},0);
+  const purchasedTotal=adhocItems.reduce((s,a)=>s+(a.cost||0),0);
+  const total=calcTotal();
+  const payload={property:prop.name,guest,dates,nights,stayType:stayLabel,rate:'£'+baseRate,extras:extrasList,extrasTotal,purchased:purchasedList,purchasedTotal,hours,total,notes,cleaner:cleanerName};
+  const logs=JSON.parse(localStorage.getItem('epm_co_logs')||'[]');
+  logs.push({...payload,id:'co-'+Date.now(),loggedAt:new Date().toISOString(),synced:false});
+  localStorage.setItem('epm_co_logs',JSON.stringify(logs));
+  try {
+    const form=new FormData();
+    form.append('data',JSON.stringify(payload));
+    await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:form});
+  } catch(e){console.log('Sync failed:',e.message);}
+  btn.disabled=false; btn.textContent='✓ Submit';
+  document.getElementById('success-sub').innerHTML='<strong>'+prop.name+'</strong> changeover logged successfully.<br>Have a great rest of your day!';
+  showView('view-success');
+}
+// ── DASHBOARD ─────────────────────────────────────────────────────────────
+async function showDashboard() {
+  showView('view-dashboard');
+  document.getElementById('dash-issues-list').innerHTML='<div class="dash-loading">Loading reports…</div>';
+  try {
+    const res=await fetch(APPS_SCRIPT_URL+'?action=changeovers');
+    const data=await res.json();
+    _allIssues=data.filter(c=>c.Notes&&c.Notes.trim());
+    renderIssues();
+  } catch(e){document.getElementById('dash-issues-list').innerHTML='<div class="dash-loading">Could not load reports.</div>';}
+}
+
+function filterIssues(f,e) {
+  _issueFilter=f;
+  document.querySelectorAll('.dash-filter-btn').forEach(b=>b.classList.remove('active'));
+  if(e&&e.target)e.target.classList.add('active');
+  renderIssues();
+}
+
+function renderIssues() {
+  const now=new Date();
+  const weekAgo=new Date(now); weekAgo.setDate(now.getDate()-7);
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+  let issues=[..._allIssues].sort((a,b)=>new Date(b.LoggedAt)-new Date(a.LoggedAt));
+  if(_issueFilter==='week')issues=issues.filter(i=>new Date(i.LoggedAt)>=weekAgo);
+  else if(_issueFilter==='month')issues=issues.filter(i=>new Date(i.LoggedAt)>=monthStart);
+  if(!issues.length){document.getElementById('dash-issues-list').innerHTML='<div class="dash-no-issues">No issues reported for this period.</div>';return;}
+  const byProp={};
+  issues.forEach(i=>{if(!byProp[i.Property])byProp[i.Property]=[];byProp[i.Property].push(i);});
+  const sevenAgo=new Date(); sevenAgo.setDate(sevenAgo.getDate()-7);
+  let html='';
+  Object.keys(byProp).sort().forEach(prop=>{
+    html+='<div class="dash-prop-group"><div class="dash-prop-name">'+prop+'</div>';
+    byProp[prop].forEach(issue=>{
+      const d=new Date(issue.LoggedAt);
+      const isNew=d>=sevenAgo;
+      const ds=d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      html+='<div class="dash-issue-card"><div class="dash-issue-meta"><span class="dash-issue-cleaner">'+(issue.Cleaner||'Unknown')+(isNew?'<span class="dash-new-badge">NEW</span>':'')+'</span><span class="dash-issue-date">'+ds+'</span></div><div class="dash-issue-text">'+issue.Notes.replace(/\n/g,'<br>')+'</div></div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('dash-issues-list').innerHTML=html;
+}
+
+// ── INVOICES ──────────────────────────────────────────────────────────────
+async function showInvoices() {
+  showView('view-invoices');
+  const sel=document.getElementById('inv-month-sel');
+  sel.innerHTML='<option value="">Choose a month…</option>';
+  const now=new Date();
+  for(let i=0;i<6;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const label=d.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+    sel.innerHTML+='<option value="'+val+'">'+label+'</option>';
+  }
+  try{const r=await fetch(APPS_SCRIPT_URL+'?action=changeovers');_allCOs=await r.json();}catch(e){}
+}
+
+function generateInvoices() {
+  const val=document.getElementById('inv-month-sel').value;
+  if(!val){alert('Please select a month');return;}
+  const [year,month]=val.split('-').map(Number);
+  const monthStart=new Date(year,month-1,1);
+  const monthEnd=new Date(year,month,0,23,59,59);
+  const monthLabel=monthStart.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const cos=_allCOs.filter(c=>{const d=new Date(c.LoggedAt);return d>=monthStart&&d<=monthEnd;});
+  if(!cos.length){document.getElementById('inv-output').innerHTML='<div class="inv-no-data">No changeovers found for '+monthLabel+'</div>';return;}
+  const byProp={};
+  cos.forEach(c=>{if(!byProp[c.Property])byProp[c.Property]=[];byProp[c.Property].push(c);});
+  _invoiceData={byProp,year,month,monthLabel};
+  let html='<div style="margin-bottom:12px;font-size:.85rem;color:#888;">'+Object.keys(byProp).length+' properties · '+cos.length+' changeovers</div>';
+  Object.keys(byProp).sort().forEach(prop=>{
+    const pcos=byProp[prop];
+    const total=pcos.reduce((s,c)=>s+(parseFloat(c.Total)||0),0);
+    const oi=OWNER_DATA[prop]||{mgmtFee:null};
+    const mf=oi.mgmtFee||0;
+    const gt=total+mf;
+    html+='<div class="inv-prop-card"><div class="inv-prop-info"><div class="inv-prop-nm">'+prop+'</div><div class="inv-prop-det">'+pcos.length+' clean'+(pcos.length>1?'s':'')+' · £'+total.toFixed(2)+' changeovers'+(mf?' + £'+mf.toFixed(2)+' mgmt fee':'')+'</div><button class="inv-view-btn" onclick="viewInvoice(\''+prop+'\')">View Invoice →</button></div><div class="inv-prop-total">£'+gt.toFixed(2)+'</div></div>';
+  });
+  document.getElementById('inv-output').innerHTML=html;
+}
+
+function viewInvoice(prop) {
+  const {byProp,year,month,monthLabel}=_invoiceData;
+  const cos=byProp[prop];
+  const oi=OWNER_DATA[prop]||{owner:prop+' — Owner',address:'',ref:prop.substring(0,3).toUpperCase(),mgmtFee:null};
+  const now=new Date();
+  const invNum='EPM-'+String(year).substring(2)+String(month).padStart(2,'0')+'-'+oi.ref;
+  const dateStr=now.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
+  let rows='', coTotal=0;
+  cos.forEach(c=>{
+    const rate=parseFloat((c.Rate||'').toString().replace('£',''))||0;
+    const ext=parseFloat(c.ExtrasTotal)||0;
+    coTotal+=rate+ext;
+    const desc=c.Guest==='Owner booking'?c.StayType+' — Owner':c.StayType;
+    const nights=c.Nights?c.Nights+' night'+(c.Nights>1?'s':''):'';
+    rows+='<tr><td><strong>'+desc+'</strong><br><span style="font-size:.78rem;color:#888;">'+(c.Dates||'')+'</span></td><td>'+nights+'</td><td>£'+rate.toFixed(2)+'</td></tr>';
+    if(c.Extras){c.Extras.split(',').forEach(ex=>{const n=ex.trim();if(!n)return;const po=PROPERTIES.find(p=>p.name===prop);const eo=po?po.extras.find(e=>e.name===n):null;const ep=eo?eo.price:0;rows+='<tr class="row-extra"><td>'+n+' ×1</td><td></td><td>'+(ep?'£'+ep.toFixed(2):'—')+'</td></tr>';});}
+  });
+  const mf=oi.mgmtFee||0; const gt=coTotal+mf;
+  const addrLines=(oi.address||'').split('\n').join('<br>');
+  document.getElementById('invoice-print-content').innerHTML=
+    '<div class="invoice-doc">'+
+    '<div class="inv-doc-header"><div class="inv-doc-company"><div class="inv-doc-company-name">Evans Property Management</div><div class="inv-doc-company-sub">Holiday Let Management · West Wales</div></div><div class="inv-doc-title">Invoice</div></div>'+
+    '<div class="inv-doc-meta"><div class="inv-doc-meta-item"><label>Invoice</label><strong>'+invNum+'</strong></div><div class="inv-doc-meta-item"><label>Date</label><strong>'+dateStr+'</strong></div><div class="inv-doc-meta-item"><label>Period</label><strong>'+monthLabel+'</strong></div><div class="inv-doc-meta-item"><label>Due</label><strong>Within 7 days</strong></div></div>'+
+    '<div class="inv-doc-parties"><div class="inv-party"><label>From</label><strong>Evans Property Management</strong><p>Llanboidy<br>Carmarthenshire<br>SA34 0EU<br>Evandaviespropertymanagement@gmail.com<br>07398 074688</p></div><div class="inv-party"><label>Billed To</label><strong>'+oi.owner+'</strong><p>'+addrLines+'</p></div><div class="inv-party"><label>Property</label><strong>'+prop+'</strong></div></div>'+
+    '<div class="inv-doc-body"><h3>Management statement for '+monthLabel+'</h3><table class="inv-table"><thead><tr><th>Description</th><th>Detail</th><th>Amount</th></tr></thead><tbody>'+rows+
+    '<tr class="row-section"><td colspan="3">Management Fee</td></tr>'+
+    '<tr class="inv-subtotal-row"><td>Changeovers &amp; extras</td><td>Monthly</td><td>£'+coTotal.toFixed(2)+'</td></tr>'+
+    (mf?'<tr class="inv-subtotal-row"><td>Management fee</td><td></td><td>£'+mf.toFixed(2)+'</td></tr>':'')+
+    '<tr class="inv-total-row"><td colspan="2"><strong>Total Due</strong></td><td><strong>£'+gt.toFixed(2)+'</strong></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="inv-doc-footer"><div class="inv-footer-section"><label>Payment Details</label><p>Monzo-Evans Property Man<br>Sort code: 04-00-03<br>Account: 94071903<br>Ref: '+invNum+'</p></div><div class="inv-footer-section"><label>Terms</label><p>Payment to be kindly made within 7 days of issue date via BACS.</p></div><div class="inv-footer-section"><label>Notes</label><p>VAT is not applicable — Evans Property Management is not VAT registered.</p></div></div>'+
+    '<div class="inv-doc-bottom"><span>Evans Property Management · VAT not applicable</span><span>Thank you for trusting us with your property.</span></div>'+
+    '</div>';
+  showView('view-invoice-print');
+}
+</script>
 </body>
 </html>
