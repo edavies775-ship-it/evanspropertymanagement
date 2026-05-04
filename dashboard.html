@@ -298,7 +298,7 @@ async function loadData(){
     const cd=await cr.json();const bd=await br.json();
     changeovers=Array.isArray(cd)?cd:(cd.data||[]);
     bookings=Array.isArray(bd)?bd:(bd.data||[]);
-    renderIssues();buildMonthOptions();buildStatsPeriodOptions();
+    renderIssues();buildMonthOptions();buildStatsPeriodOptions();renderStatsTab();
   }catch(e){document.getElementById('issues-list').innerHTML='<div class="no-issues">Failed to load. Check connection.</div>';}
 }
 
@@ -582,8 +582,8 @@ function getChangeoverHours(c){
 
 function filterChangeoversForStats(){
   const sel=document.getElementById('stats-period-sel');
-  const v=sel?sel.value:'all';
-  if(v==='all')return changeovers.slice();
+  const v=(sel&&sel.value)||'all';
+  if(!v||v==='all')return changeovers.slice();
   const parts=v.split('-');
   const yr=parseInt(parts[0]),mo=parseInt(parts[1]);
   const ms=new Date(yr,mo-1,1),me=new Date(yr,mo,0,23,59,59);
