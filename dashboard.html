@@ -1,715 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>EPM Admin Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EPM Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--g:#1E3D2F;--gold:#B89A5A;--red:#8B3A2A;--bg:#F4F7F5;--text:#1a1a1a;--border:#e2e8e4;--radius:14px}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Jost,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-button{font-family:Jost,sans-serif;cursor:pointer}
-.header{background:var(--g);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.header-title{font-size:1.1rem;font-weight:700;color:#fff}
-.header-title span{color:var(--gold)}
-.header-sub{font-size:.72rem;color:rgba(255,255,255,.55);letter-spacing:.08em;text-transform:uppercase}
-.gold-bar{height:3px;background:linear-gradient(90deg,var(--gold),#d4b87a,var(--gold))}
-.pin-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px}
-.pin-logo{font-size:2rem;font-weight:700;color:var(--g);margin-bottom:8px}
-.pin-logo span{color:var(--gold)}
-.pin-sub{font-size:.85rem;color:#888;margin-bottom:40px;text-align:center}
-.pin-label{font-size:.8rem;font-weight:700;color:var(--g);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
-.pin-input{width:200px;padding:14px 20px;font-family:Jost,sans-serif;font-size:1.4rem;font-weight:700;text-align:center;letter-spacing:.3em;border:2px solid var(--border);border-radius:12px;background:#fff;color:var(--g);outline:none;margin-bottom:16px}
-.pin-input:focus{border-color:var(--g)}
-.pin-btn{background:var(--g);color:#fff;border:none;border-radius:12px;padding:14px 40px;font-size:1rem;font-weight:700;letter-spacing:.05em}
-.pin-error{color:var(--red);font-size:.85rem;margin-top:12px;display:none}
-.dash-nav{display:flex;border-bottom:2px solid var(--border);background:#fff;position:sticky;top:60px;z-index:90}
-.dash-nav-btn{flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#888;transition:all .15s}
-.dash-nav-btn.active{color:var(--g);border-bottom-color:var(--g)}
-.dash-wrap{max-width:700px;margin:0 auto;padding:24px 20px 60px}
-.dash-title{font-size:1.4rem;font-weight:700;color:var(--g);margin-bottom:4px}
-.dash-sub{font-size:.85rem;color:#888;margin-bottom:20px}
-.filter-bar{display:flex;gap:8px;margin-bottom:20px}
-.filter-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:Jost,sans-serif;font-size:.78rem;font-weight:700;color:#888;cursor:pointer}
-.filter-btn.active{background:var(--g);color:#fff;border-color:var(--g)}
-.prop-group{margin-bottom:28px}
-.prop-group-name{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--border)}
-.issue-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1.5px solid var(--border)}
-.issue-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-.issue-cleaner{font-size:.78rem;font-weight:700;color:var(--g)}
-.issue-date{font-size:.72rem;color:#999}
-.issue-note{font-size:.88rem;color:var(--text);line-height:1.5}
-.issue-badge{display:inline-block;background:#fff3cd;color:#856404;font-size:.65rem;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:20px;margin-left:8px;text-transform:uppercase}
-.urgent-badge{display:inline-block;background:var(--red);color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:20px;margin-left:8px;text-transform:uppercase}
-.no-issues{text-align:center;padding:60px 20px;color:#aaa;font-size:.9rem}
-.issue-card.urgent{border-color:var(--red);border-left-width:4px}
-.issue-card.resolved{opacity:.55;background:#fafafa}
-.issue-card.resolved .issue-note{text-decoration:line-through;color:#888}
-.issue-card.in-progress{border-left:4px solid var(--gold)}
-.status-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
-.status-label{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#999}
-.status-pill{padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--border);background:#fff;color:#888;cursor:pointer;transition:all .15s;font-family:Jost,sans-serif}
-.status-pill.active.open{background:#fff3cd;color:#856404;border-color:#f0d97a}
-.status-pill.active.progress{background:#fdebd0;color:#9c6a1a;border-color:var(--gold)}
-.status-pill.active.resolved{background:#d4edda;color:#1e5631;border-color:#73b886}
-.status-pill:active{transform:scale(.95)}
-.admin-note-wrap{margin-top:10px}
-.admin-note-toggle{background:none;border:none;color:var(--g);font-size:.75rem;font-weight:600;cursor:pointer;padding:4px 0;font-family:Jost,sans-serif}
-.admin-note-toggle:hover{text-decoration:underline}
-.admin-note-area{width:100%;min-height:60px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:Jost,sans-serif;font-size:.85rem;resize:vertical;background:#fffdf7;margin-top:6px;color:var(--text)}
-.admin-note-area:focus{outline:none;border-color:var(--gold)}
-.admin-note-display{background:#fffdf7;border-left:3px solid var(--gold);padding:8px 12px;margin-top:8px;border-radius:6px;font-size:.85rem;color:#555;line-height:1.5;white-space:pre-wrap}
-.admin-note-meta{font-size:.65rem;color:#aaa;margin-top:4px;letter-spacing:.04em}
-.filter-group-label{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:6px;display:block}
-.filter-group{margin-bottom:14px}
-.issue-stats{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap}
-.stat-pill{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;flex:1;min-width:90px}
-.stat-pill .num{font-size:1.4rem;font-weight:700;color:var(--g);line-height:1}
-.stat-pill .lbl{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:#888;margin-top:4px;font-weight:600}
-.stat-pill.urgent .num{color:var(--red)}
-.stat-pill.open .num{color:#856404}
-.stat-pill.progress .num{color:#9c6a1a}
-.stat-pill.resolved .num{color:#1e5631}
-.stats-wrap{max-width:700px;margin:0 auto;padding:24px 20px 60px}
-.stats-section{background:#fff;border-radius:14px;border:1.5px solid var(--border);padding:18px 18px 14px;margin-bottom:20px}
-.stats-section-title{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.stats-section-title::before{content:'';display:block;width:4px;height:14px;background:var(--gold);border-radius:2px}
-.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-.kpi-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;text-align:left}
-.kpi-num{font-size:1.5rem;font-weight:700;color:var(--g);line-height:1.05}
-.kpi-lbl{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-top:6px;font-weight:600}
-.rank-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Jost,sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
+
+/* Header */
+.header{background:#1a1a1a;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.header-title{color:#fff;font-size:1.1rem;font-weight:700}
+.header-title span{color:#c9a84c}
+.header-sub{color:#888;font-size:.75rem;margin-top:2px}
+
+/* Month pills */
+.month-bar{background:#fff;border-bottom:1.5px solid #e8e8e4;padding:12px 16px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.month-bar::-webkit-scrollbar{display:none}
+.mpill{background:#f0f0ec;border:none;border-radius:20px;padding:7px 16px;font-family:Jost,sans-serif;font-size:.8rem;font-weight:600;color:#555;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.mpill.active{background:#1a1a1a;color:#fff}
+
+/* Page content */
+.page{max-width:700px;margin:0 auto;padding:20px 16px 60px}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:12px;padding:16px 12px;text-align:center;border:1.5px solid #e8e8e4}
+.kpi-num{font-size:1.6rem;font-weight:700;color:#1a1a1a}
+.kpi-lbl{font-size:.7rem;font-weight:600;color:#999;letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+
+/* Cards */
+.card{background:#fff;border-radius:12px;border:1.5px solid #e8e8e4;margin-bottom:16px;overflow:hidden}
+.card-title{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1a1a1a;padding:14px 16px 10px;border-bottom:1px solid #f0f0ec;display:flex;align-items:center;gap:8px}
+.card-title::before{content:'';display:block;width:3px;height:14px;background:#c9a84c;border-radius:2px}
+.card-empty{padding:24px 16px;color:#bbb;font-size:.85rem;text-align:center}
+
+/* Rank rows (properties + cleaners) */
+.rank-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #f5f5f0}
 .rank-row:last-child{border-bottom:none}
-.rank-num{font-size:.85rem;font-weight:700;color:var(--gold);width:22px;text-align:center}
-.rank-num.first{color:var(--g);font-size:1rem}
-.rank-name{flex:1;font-size:.92rem;font-weight:600;color:var(--text)}
-.rank-meta{font-size:.72rem;color:#888;margin-top:2px;font-weight:400}
-.rank-val{font-size:1rem;font-weight:700;color:var(--g);text-align:right;white-space:nowrap}
-.rank-bar-wrap{height:4px;background:#eee;border-radius:2px;margin-top:6px;overflow:hidden}
-.rank-bar{height:100%;background:linear-gradient(90deg,var(--g),var(--gold));border-radius:2px}
-.stay-row{display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border)}
-.stay-row:last-child{border-bottom:none}
-.stay-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.stay-prop{font-size:.92rem;font-weight:700;color:var(--text)}
-.stay-total{font-size:.78rem;color:#888;font-weight:600}
-.stay-bar{height:8px;display:flex;border-radius:4px;overflow:hidden;background:#eee;margin-bottom:6px}
-.stay-bar-short{background:var(--gold);height:100%}
-.stay-bar-long{background:var(--g);height:100%}
-.stay-bar-flat{background:#7a8a7e;height:100%}
-.stay-legend{display:flex;gap:14px;font-size:.72rem;color:#666;flex-wrap:wrap}
-.stay-legend-item{display:flex;align-items:center;gap:5px}
-.stay-legend-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
-.stay-legend-dot.short{background:var(--gold)}
-.stay-legend-dot.long{background:var(--g)}
-.stay-legend-dot.flat{background:#7a8a7e}
-.stats-period-row{display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
-.stats-period-label{font-size:.72rem;font-weight:700;color:var(--g);letter-spacing:.06em;text-transform:uppercase}
-.stats-no-data{text-align:center;padding:24px 12px;color:#aaa;font-size:.85rem}
-.inv-wrap{max-width:700px;margin:0 auto;padding:24px 20px 60px}
-.inv-select-row{display:flex;gap:12px;align-items:center;margin-bottom:24px}
-.inv-select-label{font-size:.8rem;font-weight:700;color:var(--g);letter-spacing:.06em;text-transform:uppercase}
-.inv-month-select{padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-family:Jost,sans-serif;font-size:.9rem;font-weight:600;color:var(--g);cursor:pointer;outline:none}
-.inv-prop-card{background:#fff;border-radius:12px;padding:16px 18px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.inv-prop-name{font-size:1rem;font-weight:700;color:var(--g)}
-.inv-prop-meta{font-size:.78rem;color:#888;margin-top:2px}
-.inv-view-btn{background:var(--g);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:.78rem;font-weight:700;cursor:pointer}
-.inv-no-data{text-align:center;padding:60px 20px;color:#aaa;font-size:.9rem}
-.inv-doc-screen{display:none;position:fixed;inset:0;background:var(--bg);overflow-y:auto;z-index:200}
-.inv-doc-screen.active{display:block}
-.inv-doc-topbar{background:var(--g);padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:10}
-.inv-doc-back{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:700}
-.inv-doc-print{background:var(--gold);color:#fff;border:none;border-radius:8px;padding:6px 18px;font-size:.78rem;font-weight:700;margin-left:auto}
-.inv-doc{background:#fff;max-width:760px;margin:24px auto 40px;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-.inv-doc-header{background:var(--g);padding:28px 36px;display:flex;justify-content:space-between;align-items:flex-start}
-.inv-doc-co{color:#fff;font-size:1.5rem;font-weight:700}
-.inv-doc-invoice{color:var(--gold);font-size:1.6rem;font-weight:700}
-.inv-doc-sub{color:var(--gold);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
-.inv-doc-meta{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:2px solid var(--border);padding:20px 36px}
-.inv-doc-meta-item label{display:block;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:4px}
-.inv-doc-meta-item strong{display:block;font-size:.92rem;font-weight:700;color:var(--text)}
-.inv-doc-parties{display:grid;grid-template-columns:1fr 1fr 1fr;padding:20px 36px;border-bottom:2px solid var(--border)}
-.inv-doc-party label{display:block;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:6px}
-.inv-doc-party strong{display:block;font-size:.9rem;font-weight:700;color:var(--text)}
-.inv-doc-party p{font-size:.82rem;color:#555;line-height:1.6;margin-top:2px;white-space:pre-line}
-.inv-doc-body{padding:24px 36px}
-.inv-doc-body h3{font-size:1rem;font-weight:700;color:var(--g);margin-bottom:14px}
-.inv-table{width:100%;border-collapse:collapse}
-.inv-table th{background:var(--g);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;text-align:left}
-.inv-table th:last-child{text-align:right}
-.inv-table td{padding:10px 14px;font-size:.85rem;border-bottom:1px solid var(--border)}
-.inv-table td:last-child{text-align:right;font-weight:600}
-.inv-table tr.extra-row td{background:#f9f9f9;font-size:.8rem;padding:7px 14px 7px 28px;color:#555}
-.inv-table tr.section-divider td{background:transparent;padding:8px 14px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#aaa;border-bottom:none}
-.inv-table tr.subtotal-row td{font-size:.85rem;color:#555}
-.inv-table tr.total-row{background:var(--g)}
-.inv-table tr.total-row td{color:#fff;font-size:1rem;font-weight:700;border-bottom:none}
-.inv-doc-footer-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;padding:20px 36px;border-top:2px solid var(--border)}
-.inv-doc-footer-info h4{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-.inv-doc-footer-info p{font-size:.78rem;color:#555;line-height:1.6}
-.inv-doc-bottom{background:var(--g);padding:12px 36px;display:flex;justify-content:space-between}
-.inv-doc-bottom span{font-size:.72rem;color:var(--gold)}
-@media print{.inv-doc-topbar,.dash-nav,.header,.gold-bar{display:none!important}.inv-doc-screen{position:static!important;background:#fff!important}.inv-doc{box-shadow:none!important;margin:0!important;border-radius:0!important}}
+.rank-n{font-size:.75rem;font-weight:700;color:#c9a84c;width:18px;text-align:center;flex-shrink:0}
+.rank-body{flex:1;min-width:0}
+.rank-name{font-size:.9rem;font-weight:600;color:#1a1a1a}
+.rank-meta{font-size:.75rem;color:#999;margin-top:2px}
+.rank-bar-wrap{height:4px;background:#f0f0ec;border-radius:2px;margin-top:5px}
+.rank-bar{height:4px;background:#c9a84c;border-radius:2px;transition:width .4s}
+.rank-val{font-size:.9rem;font-weight:700;color:#1a1a1a;flex-shrink:0}
+
+/* Two column layout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:520px){.two-col{grid-template-columns:1fr}}
+
+/* Issues */
+.issue-row{padding:12px 16px;border-bottom:1px solid #f5f5f0}
+.issue-row:last-child{border-bottom:none}
+.issue-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px}
+.issue-prop{font-size:.85rem;font-weight:700;color:#1a1a1a}
+.issue-date{font-size:.72rem;color:#bbb}
+.issue-note{font-size:.82rem;color:#444;line-height:1.5}
+.issue-meta{font-size:.72rem;color:#999;margin-top:4px}
+.tag-urgent{display:inline-block;background:#fee;color:#c00;font-size:.65rem;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:10px;margin-right:5px;text-transform:uppercase}
+
+/* Invoice section */
+.inv-prop{margin-bottom:12px}
+.inv-prop-name{font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1a1a1a;padding:10px 16px;background:#fafaf8;border-bottom:1px solid #f0f0ec}
+.inv-line{display:flex;align-items:center;padding:9px 16px;border-bottom:1px solid #f5f5f0;gap:8px}
+.inv-line:last-child{border-bottom:none}
+.inv-line-main{flex:1;min-width:0}
+.inv-line-desc{font-size:.82rem;color:#1a1a1a}
+.inv-line-meta{font-size:.72rem;color:#999;margin-top:2px}
+.inv-line-amt{font-size:.9rem;font-weight:700;color:#1a1a1a;flex-shrink:0}
+.inv-total-row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:#f5f5f0;font-weight:700;font-size:.9rem}
+.inv-total-label{color:#555}
+.inv-total-amt{color:#1a1a1a}
+
+/* Loading */
+.loading{text-align:center;padding:40px;color:#bbb;font-size:.9rem}
 </style>
 </head>
 <body>
-<div id="main-app">
-  <div class="header"><div><div class="header-title">Evans <span>Property Management</span></div><div class="header-sub">Admin Dashboard</div></div></div>
-  <div class="gold-bar"></div>
-  <div class="dash-nav">
-    <button class="dash-nav-btn active" id="nav-reports" onclick="showTab('reports')">Issues</button>
-    <button class="dash-nav-btn" id="nav-stats" onclick="showTab('stats')">Stats</button>
-    <button class="dash-nav-btn" id="nav-invoices" onclick="showTab('invoices')">Invoices</button>
-  </div>
-  <div id="tab-reports" class="dash-wrap">
-    <div class="dash-title">Reported Issues</div>
-    <div class="dash-sub">Track and manage problems reported by the team</div>
-    <div class="issue-stats" id="issue-stats"></div>
-    <div class="filter-group">
-      <span class="filter-group-label">Status</span>
-      <div class="filter-bar">
-        <button class="filter-btn active" data-status="active" onclick="setStatusFilter('active',this)">Active</button>
-        <button class="filter-btn" data-status="open" onclick="setStatusFilter('open',this)">Open</button>
-        <button class="filter-btn" data-status="progress" onclick="setStatusFilter('progress',this)">In Progress</button>
-        <button class="filter-btn" data-status="resolved" onclick="setStatusFilter('resolved',this)">Resolved</button>
-        <button class="filter-btn" data-status="all" onclick="setStatusFilter('all',this)">All</button>
-      </div>
-    </div>
-    <div class="filter-group">
-      <span class="filter-group-label">Time</span>
-      <div class="filter-bar">
-        <button class="filter-btn active" data-time="all" onclick="setTimeFilter('all',this)">All Time</button>
-        <button class="filter-btn" data-time="week" onclick="setTimeFilter('week',this)">This Week</button>
-        <button class="filter-btn" data-time="month" onclick="setTimeFilter('month',this)">This Month</button>
-      </div>
-    </div>
-    <div class="filter-group">
-      <span class="filter-group-label">Property</span>
-      <select class="inv-month-select" id="prop-filter" onchange="renderIssues()" style="width:100%;max-width:280px">
-        <option value="all">All properties</option>
-      </select>
-    </div>
-    <div id="issues-list"><div class="no-issues">Loading issues...</div></div>
-  </div>
-  <div id="tab-stats" class="stats-wrap" style="display:none">
-    <div class="dash-title">Performance Stats</div>
-    <div class="dash-sub">Top properties, hours by cleaner, stay-type breakdown</div>
-    <div class="stats-period-row">
-      <span class="stats-period-label">Period</span>
-      <select class="inv-month-select" id="stats-period-sel" onchange="renderStatsTab()"></select>
-    </div>
-    <div class="kpi-row" id="stats-kpis"></div>
-    <div class="stats-section">
-      <div class="stats-section-title">Top Performing Properties</div>
-      <div id="stats-top-props"></div>
-    </div>
-    <div class="stats-section">
-      <div class="stats-section-title">Hours by Cleaner</div>
-      <div id="stats-cleaners"></div>
-    </div>
-    <div class="stats-section">
-      <div class="stats-section-title">Short vs Long Stays</div>
-      <div class="stay-legend" style="margin-bottom:10px">
-        <span class="stay-legend-item"><span class="stay-legend-dot short"></span>Short stay</span>
-        <span class="stay-legend-item"><span class="stay-legend-dot long"></span>Long stay</span>
-        <span class="stay-legend-item"><span class="stay-legend-dot flat"></span>Flat / All-inclusive</span>
-      </div>
-      <div id="stats-stays"></div>
-    </div>
-  </div>
-  <div id="tab-invoices" class="inv-wrap" style="display:none">
-    <div class="inv-select-row">
-      <span class="inv-select-label">Month</span>
-      <select class="inv-month-select" id="inv-month-sel" onchange="generateInvoices()"></select>
-    </div>
-    <div id="inv-cards"><div class="inv-no-data">Select a month to generate invoices.</div></div>
+
+<div class="header">
+  <div>
+    <div class="header-title">Evans <span>Property Management</span></div>
+    <div class="header-sub">Admin Dashboard</div>
   </div>
 </div>
-<div class="inv-doc-screen" id="inv-doc-screen">
-  <div class="inv-doc-topbar">
-    <button class="inv-doc-back" onclick="closeInvoice()">Back</button>
-    <button class="inv-doc-print" onclick="window.print()">Print / Save PDF</button>
+
+<div class="month-bar" id="month-bar"></div>
+
+<div class="page">
+  <div class="kpi-row" id="kpis"><div class="kpi"><div class="kpi-num">—</div><div class="kpi-lbl">Changeovers</div></div><div class="kpi"><div class="kpi-num">—</div><div class="kpi-lbl">Income</div></div><div class="kpi"><div class="kpi-num">—</div><div class="kpi-lbl">Hours</div></div></div>
+
+  <div class="two-col">
+    <div class="card" id="card-props">
+      <div class="card-title">Top Properties</div>
+      <div class="card-empty">Loading…</div>
+    </div>
+    <div class="card" id="card-cleaners">
+      <div class="card-title">Top Cleaners</div>
+      <div class="card-empty">Loading…</div>
+    </div>
   </div>
-  <div class="inv-doc" id="inv-doc-content"></div>
+
+  <div class="card" id="card-issues">
+    <div class="card-title">Flagged Issues</div>
+    <div class="card-empty">Loading…</div>
+  </div>
+
+  <div class="card" id="card-invoices">
+    <div class="card-title">Invoices</div>
+    <div class="card-empty">Select a month above to view invoices.</div>
+  </div>
 </div>
+
 <script>
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycby6ude4tWpwxI2MChF8qdeNOptOm3lZDdDdVTWcrE_4FTgfGItQx9qKEIlIxCEuoTxq6Q/exec';
-const PIN='1234';
-const OWNER_DATA={'Maes Dyfed':{owner:'Maes Dyfed - Owner',address:'',ref:'MD',mgmtFee:80},'Arosfa':{owner:'Arosfa - Owner',address:'',ref:'A',mgmtFee:99},'Teifi View':{owner:'Teifi View - Owner',address:'',ref:'TV',mgmtFee:null},'Ty Gladys':{owner:'Ty Gladys - Owner',address:'',ref:'TG',mgmtFee:79},'Ty Eufron':{owner:'Ty Eufron - Huw Reynolds',address:'Ty Eufron\nSquare & Compass\nSA62 5JJ',ref:'TE',mgmtFee:79},'Brynhowell':{owner:'Brynhowell - Owner',address:'',ref:'BFH',mgmtFee:null},'Stambar':{owner:'Stambar - Owner',address:'',ref:'STB',mgmtFee:null},'Ty Pinc':{owner:'Ty Pinc - Owner',address:'',ref:'TP',mgmtFee:null},'Cwm Hyfryd':{owner:'Cwm Hyfryd - Owner',address:'',ref:'CH',mgmtFee:null}};
 const PROPS_CFG={'Maes Dyfed':{rateType:'split',rateShort:130,rateLong:170,threshold:4,mgmtFee:80},'Arosfa':{rateType:'split',rateShort:130,rateLong:170,threshold:4,mgmtFee:99},'Teifi View':{rateType:'split',rateShort:110,rateLong:130,threshold:4,mgmtFee:null},'Ty Gladys':{rateType:'split',rateShort:125,rateLong:160,threshold:4,mgmtFee:79},'Ty Eufron':{rateType:'split',rateShort:150,rateLong:180,threshold:4,mgmtFee:79},'Brynhowell':{rateType:'flat',flatRate:250,mgmtFee:null},'Stambar':{rateType:'flat',flatRate:140,mgmtFee:null},'Ty Pinc':{rateType:'flat',flatRate:130,mgmtFee:null},'Cwm Hyfryd':{rateType:'allinc',flatRate:260,mgmtFee:null}};
-let changeovers=[],bookings=[];
-let _statusFilter='active',_timeFilter='all';
-const STATUS_LABELS={open:'Open',progress:'In Progress',resolved:'Resolved'};
-const URGENT_RE=/\b(leak|leaking|broken|broke|water|urgent|emergency|flood|fire|electric|electrical|gas|smoke|mou?ld|pest|infest|burst|crack|smell|sewer|boiler|heating|alarm|smoke detector|carbon monoxide)/i;
+const URGENT=/\b(leak|broken|water|urgent|emergency|flood|fire|electric|gas|smoke|mould|mold|pest|burst|crack|smell|sewer|boiler|heating|alarm)/i;
 
-function issueKey(c){
-  const p=c.Property||c.property||'';
-  const cl=c.Cleaner||c.cleaner||c.Name||'';
-  const d=c.LoggedAt||c.Date||c.date||c.Timestamp||'';
-  const n=(c.Notes||c.notes||'').slice(0,150);
-  return [p,cl,d,n].join('|');
-}
-function loadIssueState(){try{return JSON.parse(localStorage.getItem('epm_issue_state')||'{}');}catch(e){return{};}}
-function saveIssueState(s){localStorage.setItem('epm_issue_state',JSON.stringify(s));}
-function getIssueRecord(key){const s=loadIssueState();return s[key]||{status:'open',adminNote:''};}
-function updateIssueRecord(key,patch){
-  const s=loadIssueState();
-  s[key]=Object.assign({status:'open',adminNote:''},s[key]||{},patch,{updatedAt:new Date().toISOString()});
-  saveIssueState(s);
-}
-function cycleStatus(key){
-  const cur=getIssueRecord(key).status;
-  const next=cur==='open'?'progress':cur==='progress'?'resolved':'open';
-  updateIssueRecord(key,{status:next});
-  renderIssues();
-}
-function saveAdminNote(key,textareaEl){
-  const v=textareaEl.value.trim();
-  updateIssueRecord(key,{adminNote:v});
-  renderIssues();
-}
-function toggleAdminNote(key){
-  const wrap=document.getElementById('an-wrap-'+btoa(key).replace(/[^a-zA-Z0-9]/g,''));
-  if(!wrap)return;
-  wrap.style.display=wrap.style.display==='none'?'block':'none';
-  if(wrap.style.display==='block'){const ta=wrap.querySelector('textarea');if(ta)ta.focus();}
-}
-function isUrgent(note){return URGENT_RE.test(note||'');}
-function fmtUpdated(iso){if(!iso)return'';const d=new Date(iso);if(isNaN(d))return'';return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
-function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+let changeovers=[], activePeriod='all';
 
-loadData();
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function money(n){return'£'+Math.round(n).toLocaleString('en-GB');}
+function fmtDate(iso){if(!iso)return'';const d=new Date(iso);return isNaN(d)?iso:d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+function getIncome(c){const m=String(c.Total||c.total||'').match(/[\d.]+/);return m?parseFloat(m[0])||0:0;}
+function getHours(c){const h=parseFloat(c.Hours||c.hours||0);return isNaN(h)?0:h;}
 
-function showTab(t){
-  document.getElementById('tab-reports').style.display=t==='reports'?'block':'none';
-  document.getElementById('tab-stats').style.display=t==='stats'?'block':'none';
-  document.getElementById('tab-invoices').style.display=t==='invoices'?'block':'none';
-  document.getElementById('nav-reports').classList.toggle('active',t==='reports');
-  document.getElementById('nav-stats').classList.toggle('active',t==='stats');
-  document.getElementById('nav-invoices').classList.toggle('active',t==='invoices');
-  if(t==='stats')renderStatsTab();
+function filtered(){
+  if(activePeriod==='all')return changeovers.slice();
+  const[yr,mo]=activePeriod.split('-').map(Number);
+  const from=new Date(yr,mo-1,1), to=new Date(yr,mo,0,23,59,59);
+  return changeovers.filter(c=>{
+    const d=new Date(c.LoggedAt||c.Date||'');
+    return !isNaN(d)&&d>=from&&d<=to;
+  });
+}
+
+function buildMonthPills(){
+  const bar=document.getElementById('month-bar');
+  const now=new Date();
+  let html='<button class="mpill'+(activePeriod==='all'?' active':'')+'" onclick="setPeriod(\'all\')">All time</button>';
+  for(let i=0;i<8;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const val=d.getFullYear()+'-'+(d.getMonth()+1);
+    const label=d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
+    html+='<button class="mpill'+(activePeriod===val?' active':'')+'" onclick="setPeriod(\''+val+'\')">'+label+'</button>';
+  }
+  bar.innerHTML=html;
+}
+
+function setPeriod(v){activePeriod=v;buildMonthPills();renderAll();}
+
+function renderAll(){
+  const data=filtered();
+  renderKpis(data);
+  renderProperties(data);
+  renderCleaners(data);
+  renderIssues(data);
+  renderInvoices(data);
+}
+
+function renderKpis(data){
+  let income=0,hours=0;
+  data.forEach(c=>{income+=getIncome(c);hours+=getHours(c);});
+  document.getElementById('kpis').innerHTML=
+    '<div class="kpi"><div class="kpi-num">'+data.length+'</div><div class="kpi-lbl">Changeovers</div></div>'+
+    '<div class="kpi"><div class="kpi-num">'+money(income)+'</div><div class="kpi-lbl">Income</div></div>'+
+    '<div class="kpi"><div class="kpi-num">'+(Math.round(hours*10)/10)+'h</div><div class="kpi-lbl">Hours</div></div>';
+}
+
+function renderProperties(data){
+  const byProp={};
+  data.forEach(c=>{
+    const p=c.Property||'Unknown';
+    if(!byProp[p])byProp[p]={cleans:0,income:0};
+    byProp[p].cleans++;byProp[p].income+=getIncome(c);
+  });
+  const rows=Object.entries(byProp).sort((a,b)=>b[1].income-a[1].income);
+  const card=document.getElementById('card-props');
+  if(!rows.length){card.innerHTML='<div class="card-title">Top Properties</div><div class="card-empty">No data yet.</div>';return;}
+  const maxInc=rows[0][1].income||1;
+  card.innerHTML='<div class="card-title">Top Properties</div>'+rows.map(([p,v],i)=>`
+    <div class="rank-row">
+      <div class="rank-n">${i+1}</div>
+      <div class="rank-body">
+        <div class="rank-name">${esc(p)}</div>
+        <div class="rank-meta">${v.cleans} clean${v.cleans!==1?'s':''}</div>
+        <div class="rank-bar-wrap"><div class="rank-bar" style="width:${Math.round(v.income/maxInc*100)}%"></div></div>
+      </div>
+      <div class="rank-val">${money(v.income)}</div>
+    </div>`).join('');
+}
+
+function renderCleaners(data){
+  const byCleaner={};
+  data.forEach(c=>{
+    const n=(c.Cleaner||c.cleaner||'Unknown').trim()||'Unknown';
+    if(!byCleaner[n])byCleaner[n]={hours:0,cleans:0};
+    byCleaner[n].hours+=getHours(c);byCleaner[n].cleans++;
+  });
+  const rows=Object.entries(byCleaner).sort((a,b)=>b[1].hours-a[1].hours);
+  const card=document.getElementById('card-cleaners');
+  if(!rows.length){card.innerHTML='<div class="card-title">Top Cleaners</div><div class="card-empty">No data yet.</div>';return;}
+  const maxHrs=rows[0][1].hours||1;
+  card.innerHTML='<div class="card-title">Top Cleaners</div>'+rows.map(([n,v],i)=>`
+    <div class="rank-row">
+      <div class="rank-n">${i+1}</div>
+      <div class="rank-body">
+        <div class="rank-name">${esc(n)}</div>
+        <div class="rank-meta">${v.cleans} clean${v.cleans!==1?'s':''}</div>
+        <div class="rank-bar-wrap"><div class="rank-bar" style="width:${Math.round(v.hours/maxHrs*100)}%"></div></div>
+      </div>
+      <div class="rank-val">${Math.round(v.hours*10)/10}h</div>
+    </div>`).join('');
+}
+
+function renderIssues(data){
+  const issues=data.filter(c=>(c.Notes||c.notes||'').trim());
+  const card=document.getElementById('card-issues');
+  if(!issues.length){card.innerHTML='<div class="card-title">Flagged Issues</div><div class="card-empty">No issues flagged in this period.</div>';return;}
+  card.innerHTML='<div class="card-title">Flagged Issues</div>'+issues.map(c=>{
+    const note=(c.Notes||c.notes||'').trim();
+    const urgent=URGENT.test(note);
+    return`<div class="issue-row">
+      <div class="issue-top">
+        <div class="issue-prop">${urgent?'<span class="tag-urgent">Urgent</span>':''} ${esc(c.Property||'')}</div>
+        <div class="issue-date">${fmtDate(c.LoggedAt||c.Date||'')}</div>
+      </div>
+      <div class="issue-note">${esc(note)}</div>
+      <div class="issue-meta">${esc(c.Cleaner||'')}${c.Guest?' · '+esc(c.Guest):''}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderInvoices(data){
+  const card=document.getElementById('card-invoices');
+  if(activePeriod==='all'){card.innerHTML='<div class="card-title">Invoices</div><div class="card-empty">Select a month above to view invoices.</div>';return;}
+  if(!data.length){card.innerHTML='<div class="card-title">Invoices</div><div class="card-empty">No changeovers in this period.</div>';return;}
+
+  const byProp={};
+  data.forEach(c=>{
+    const p=c.Property||'Unknown';
+    if(!byProp[p])byProp[p]=[];
+    byProp[p].push(c);
+  });
+
+  let html='<div class="card-title">Invoices</div>';
+  Object.entries(byProp).sort().forEach(([prop,rows])=>{
+    let total=0;
+    const lines=rows.map(c=>{
+      const inc=getIncome(c);
+      total+=inc;
+      const extras=parseFloat(c.ExtrasTotal||0)||0;
+      const rate=String(c.Rate||'').trim();
+      const extraStr=extras>0?' + £'+extras.toFixed(0)+' extras':'';
+      const hrs=getHours(c);
+      return`<div class="inv-line">
+        <div class="inv-line-main">
+          <div class="inv-line-desc">${esc(c.Guest||'Guest')} · ${esc(c.StayType||c.stayType||'')} ${rate?'· '+esc(rate):''}</div>
+          <div class="inv-line-meta">${fmtDate(c.LoggedAt||'')} · ${esc(c.Cleaner||'')} · ${hrs}h${extraStr}</div>
+        </div>
+        <div class="inv-line-amt">£${inc.toFixed(0)}</div>
+      </div>`;
+    }).join('');
+    html+=`<div class="inv-prop">
+      <div class="inv-prop-name">${esc(prop)}</div>
+      ${lines}
+      <div class="inv-total-row"><span class="inv-total-label">Total</span><span class="inv-total-amt">${money(total)}</span></div>
+    </div>`;
+  });
+  card.innerHTML=html;
 }
 
 async function loadData(){
   try{
-    const [cr,br]=await Promise.all([fetch(APPS_SCRIPT_URL+'?action=changeovers'),fetch(APPS_SCRIPT_URL+'?action=bookings')]);
-    const cd=await cr.json();const bd=await br.json();
+    const res=await fetch(APPS_SCRIPT_URL+'?action=changeovers');
+    const cd=await res.json();
     changeovers=Array.isArray(cd)?cd:(cd.data||[]);
-    bookings=Array.isArray(bd)?bd:(bd.data||[]);
-    renderIssues();buildMonthOptions();buildStatsPeriodOptions();renderStatsTab();
-  }catch(e){document.getElementById('issues-list').innerHTML='<div class="no-issues">Failed to load. Check connection.</div>';}
-}
-
-function setStatusFilter(f,btn){
-  document.querySelectorAll('.filter-btn[data-status]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');_statusFilter=f;renderIssues();
-}
-function setTimeFilter(f,btn){
-  document.querySelectorAll('.filter-btn[data-time]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');_timeFilter=f;renderIssues();
-}
-
-function getAllIssueNotes(){
-  return changeovers.filter(c=>{
-    const n=(c.Notes||c.notes||'').trim();
-    return n.length>0;
-  });
-}
-
-function buildPropertyFilter(){
-  const sel=document.getElementById('prop-filter');
-  if(!sel)return;
-  const cur=sel.value||'all';
-  const props=Array.from(new Set(getAllIssueNotes().map(c=>c.Property||c.property||'Unknown'))).sort();
-  sel.innerHTML='<option value="all">All properties</option>'+props.map(p=>'<option value="'+escHtml(p)+'">'+escHtml(p)+'</option>').join('');
-  sel.value=props.includes(cur)||cur==='all'?cur:'all';
-}
-
-function renderStats(notes){
-  const st=document.getElementById('issue-stats');
-  if(!st)return;
-  let urgent=0,open=0,progress=0,resolved=0;
-  notes.forEach(c=>{
-    const k=issueKey(c);
-    const rec=getIssueRecord(k);
-    if(rec.status==='resolved')resolved++;
-    else if(rec.status==='progress')progress++;
-    else open++;
-    if(rec.status!=='resolved'&&isUrgent(c.Notes||c.notes||''))urgent++;
-  });
-  st.innerHTML=
-    '<div class="stat-pill urgent"><div class="num">'+urgent+'</div><div class="lbl">Urgent</div></div>'+
-    '<div class="stat-pill open"><div class="num">'+open+'</div><div class="lbl">Open</div></div>'+
-    '<div class="stat-pill progress"><div class="num">'+progress+'</div><div class="lbl">In Progress</div></div>'+
-    '<div class="stat-pill resolved"><div class="num">'+resolved+'</div><div class="lbl">Resolved</div></div>';
-}
-
-function renderIssues(){
-  const now=new Date();
-  const wk=new Date(now-7*86400000);
-  const mo=new Date(now.getFullYear(),now.getMonth(),1);
-  const all=getAllIssueNotes();
-  buildPropertyFilter();
-  renderStats(all);
-  const propSel=document.getElementById('prop-filter');
-  const propVal=propSel?propSel.value:'all';
-  const filtered=all.filter(c=>{
-    const d=new Date(c.LoggedAt||c.Date||c.date||c.Timestamp||'');
-    if(_timeFilter==='week'&&d<wk)return false;
-    if(_timeFilter==='month'&&d<mo)return false;
-    const prop=c.Property||c.property||'Unknown';
-    if(propVal!=='all'&&prop!==propVal)return false;
-    const status=getIssueRecord(issueKey(c)).status;
-    if(_statusFilter==='active'&&status==='resolved')return false;
-    if(_statusFilter==='open'&&status!=='open')return false;
-    if(_statusFilter==='progress'&&status!=='progress')return false;
-    if(_statusFilter==='resolved'&&status!=='resolved')return false;
-    return true;
-  });
-  const el=document.getElementById('issues-list');
-  if(!filtered.length){el.innerHTML='<div class="no-issues">No issues match the current filters.</div>';return;}
-  // sort: urgent first, then open, then progress, then resolved; within each, newest first
-  filtered.sort((a,b)=>{
-    const ra=getIssueRecord(issueKey(a)),rb=getIssueRecord(issueKey(b));
-    const noteA=a.Notes||a.notes||'',noteB=b.Notes||b.notes||'';
-    const ua=ra.status!=='resolved'&&isUrgent(noteA)?0:1;
-    const ub=rb.status!=='resolved'&&isUrgent(noteB)?0:1;
-    if(ua!==ub)return ua-ub;
-    const ord={open:0,progress:1,resolved:2};
-    if(ord[ra.status]!==ord[rb.status])return ord[ra.status]-ord[rb.status];
-    const da=new Date(a.Date||a.date||a.Timestamp||0),db=new Date(b.Date||b.date||b.Timestamp||0);
-    return db-da;
-  });
-  const byProp={};
-  filtered.forEach(c=>{const p=c.Property||c.property||'Unknown';if(!byProp[p])byProp[p]=[];byProp[p].push(c);});
-  el.innerHTML=Object.entries(byProp).map(([prop,items])=>{
-    const cards=items.map(c=>{
-      const key=issueKey(c);
-      const safeKey=btoa(key).replace(/[^a-zA-Z0-9]/g,'');
-      const rec=getIssueRecord(key);
-      const dateStr=c.LoggedAt||c.Date||c.date||c.Timestamp||'';
-      const d=new Date(dateStr);
-      const isNew=(now-d)<7*86400000;
-      const fmt=isNaN(d)?dateStr:d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-      const cleaner=c.Cleaner||c.cleaner||c.Name||'';
-      const note=c.Notes||c.notes||'';
-      const urgent=rec.status!=='resolved'&&isUrgent(note);
-      const cardCls='issue-card'+(urgent?' urgent':'')+(rec.status==='resolved'?' resolved':'')+(rec.status==='progress'?' in-progress':'');
-      const statusLabel=STATUS_LABELS[rec.status]||'Open';
-      const statusCls=rec.status==='progress'?'progress':rec.status;
-      const adminNoteHtml=rec.adminNote
-        ? '<div class="admin-note-display">'+escHtml(rec.adminNote)+(rec.updatedAt?'<div class="admin-note-meta">Updated '+fmtUpdated(rec.updatedAt)+'</div>':'')+'</div>'
-        : '';
-      const adminNoteEditor=
-        '<div class="admin-note-wrap">'+
-          '<button class="admin-note-toggle" onclick="toggleAdminNote(\''+escHtml(key.replace(/'/g,"\\'"))+'\')">'+(rec.adminNote?'Edit note':'+ Add note')+'</button>'+
-          '<div id="an-wrap-'+safeKey+'" style="display:none">'+
-            '<textarea class="admin-note-area" placeholder="Add admin notes (e.g. plumber called, quote received, scheduled for Friday)" onblur="saveAdminNote(\''+escHtml(key.replace(/'/g,"\\'"))+'\',this)">'+escHtml(rec.adminNote)+'</textarea>'+
-          '</div>'+
-        '</div>';
-      return '<div class="'+cardCls+'">'+
-        '<div class="issue-card-top">'+
-          '<span class="issue-cleaner">'+escHtml(cleaner)+(isNew&&rec.status!=='resolved'?'<span class="issue-badge">NEW</span>':'')+(urgent?'<span class="urgent-badge">URGENT</span>':'')+'</span>'+
-          '<span class="issue-date">'+escHtml(fmt)+'</span>'+
-        '</div>'+
-        '<div class="issue-note">'+escHtml(note)+'</div>'+
-        adminNoteHtml+
-        adminNoteEditor+
-        '<div class="status-row">'+
-          '<span class="status-label">Status</span>'+
-          '<button class="status-pill active '+statusCls+'" onclick="cycleStatus(\''+escHtml(key.replace(/'/g,"\\'"))+'\')" title="Click to change status">'+statusLabel+'</button>'+
-          (rec.updatedAt&&!rec.adminNote?'<span class="admin-note-meta" style="margin-left:auto">Updated '+fmtUpdated(rec.updatedAt)+'</span>':'')+
-        '</div>'+
-      '</div>';
-    }).join('');
-    return '<div class="prop-group"><div class="prop-group-name">'+escHtml(prop)+'</div>'+cards+'</div>';
-  }).join('');
-}
-
-function buildMonthOptions(){
-  const sel=document.getElementById('inv-month-sel');
-  const now=new Date();
-  const opts=[];
-  for(let i=0;i<6;i++){
-    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-    const val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-    const label=d.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
-    opts.push('<option value="'+val+'">'+label+'</option>');
+    // Default to current month
+    const now=new Date();
+    activePeriod=now.getFullYear()+'-'+(now.getMonth()+1);
+    buildMonthPills();
+    renderAll();
+  }catch(e){
+    document.getElementById('card-issues').innerHTML='<div class="card-title">Flagged Issues</div><div class="card-empty">Failed to load data. Check connection.</div>';
   }
-  sel.innerHTML=opts.join('');generateInvoices();
 }
 
-function generateInvoices(){
-  const sel=document.getElementById('inv-month-sel');
-  const parts=sel.value.split('-');
-  const yr=parseInt(parts[0]),mo=parseInt(parts[1]);
-  const ms=new Date(yr,mo-1,1),me=new Date(yr,mo,0,23,59,59);
-  const byProp={};
-  changeovers.forEach(c=>{
-    const d=new Date(c.LoggedAt||c.Date||c.date||c.Timestamp||'');
-    if(d>=ms&&d<=me){const p=c.Property||c.property||'Unknown';if(!byProp[p])byProp[p]=[];byProp[p].push(c);}
-  });
-  const container=document.getElementById('inv-cards');
-  if(!Object.keys(byProp).length){container.innerHTML='<div class="inv-no-data">No changeovers found for this month.</div>';return;}
-  container.innerHTML=Object.entries(byProp).map(([prop,items])=>{
-    const cfg=PROPS_CFG[prop]||{};
-    const total=items.reduce((sum,c)=>{
-      const nights=parseInt(c.Nights||c.nights||0)||0;
-      let rate=0;
-      if(cfg.rateType==='split')rate=nights>=(cfg.threshold||4)?cfg.rateLong:cfg.rateShort;
-      else if(cfg.rateType==='flat'||cfg.rateType==='allinc')rate=cfg.flatRate||0;
-      return sum+rate;
-    },0)+(cfg.mgmtFee||0);
-    const monthVal=sel.value;
-    return '<div class="inv-prop-card"><div><div class="inv-prop-name">'+prop+'</div><div class="inv-prop-meta">'+items.length+' changeover'+(items.length!==1?'s':'')+' &middot; Total: &pound;'+total.toFixed(2)+'</div></div><button class="inv-view-btn" onclick="viewInvoice(\''+prop.replace(/\'/g,"\\\'")+'\',\''+monthVal+'\')">View Invoice</button></div>';
-  }).join('');
-}
-
-function viewInvoice(propName,monthVal){
-  const parts=monthVal.split('-');
-  const yr=parseInt(parts[0]),mo=parseInt(parts[1]);
-  const ms=new Date(yr,mo-1,1),me=new Date(yr,mo,0,23,59,59);
-  const monthLabel=ms.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
-  const items=changeovers.filter(c=>{
-    const d=new Date(c.LoggedAt||c.Date||c.date||c.Timestamp||'');
-    const p=c.Property||c.property||'';
-    return p===propName&&d>=ms&&d<=me;
-  });
-  const cfg=PROPS_CFG[propName]||{};
-  const owner=OWNER_DATA[propName]||{owner:propName+' - Owner',address:'',ref:propName.substring(0,3).toUpperCase(),mgmtFee:null};
-  const yy=String(yr).slice(-2),mm=String(mo).padStart(2,'0');
-  const invNum='EPM-'+yy+mm+'-'+(owner.ref||'XX');
-  const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
-  let coTotal=0;
-  const rows=items.map(c=>{
-    const nights=parseInt(c.Nights||c.nights||0)||0;
-    const stayType=c['Stay Type']||c.stayType||c.StayType||(nights>=(cfg.threshold||4)?'Long stay':'Short stay');
-    const guest=c.Guest||c.guest||'Guest';
-    const endDate=c['Check-out']||c.checkout||c.CheckOut||c.Date||c.date||'';
-    let rate=0;
-    if(cfg.rateType==='split')rate=nights>=(cfg.threshold||4)?cfg.rateLong:cfg.rateShort;
-    else if(cfg.rateType==='flat'||cfg.rateType==='allinc')rate=cfg.flatRate||0;
-    const adhocRaw=c['Ad Hoc']||c.adhoc||c.AdHoc||'';
-    let adhocTotal=0;
-    let extraRows='';
-    const rawExtras=c.Extras||c.extras||c['Extras Purchased']||'';
-    if(rawExtras&&rawExtras!=='None'){
-      String(rawExtras).split(',').forEach(e=>{const t=e.trim();if(t)extraRows+='<tr class="extra-row"><td colspan="2">'+t+'</td><td>Included</td></tr>';});
-    }
-    if(adhocRaw&&adhocRaw!=='None'){
-      String(adhocRaw).split(',').forEach(e=>{const m=e.trim().match(/^(.+)\s+[£GBP]?([\d.]+)$/);if(m){const cost=parseFloat(m[2]);adhocTotal+=cost;coTotal+=cost;extraRows+='<tr class="extra-row"><td colspan="2">'+m[1].trim()+'</td><td>&pound;'+cost.toFixed(2)+'</td></tr>';}});
-    }
-    coTotal+=rate;
-    return '<tr><td><strong>'+stayType+' - '+guest+'</strong><br><small>'+endDate+'</small></td><td>'+nights+' night'+(nights!==1?'s':'')+'</td><td>&pound;'+rate.toFixed(2)+'</td></tr>'+extraRows;
-  }).join('');
-  const mgmt=owner.mgmtFee||cfg.mgmtFee||0;
-  const total=coTotal+mgmt;
-  const addrLines=owner.address?owner.address.split('\n').join('<br>'):'';
-  document.getElementById('inv-doc-content').innerHTML=
-    '<div class="inv-doc-header"><div><div class="inv-doc-co">Evans Property Management</div><div class="inv-doc-sub">Holiday Let Management &middot; West Wales</div></div><div class="inv-doc-invoice">Invoice</div></div>'+
-    '<div class="inv-doc-meta"><div class="inv-doc-meta-item"><label>Invoice</label><strong>'+invNum+'</strong></div><div class="inv-doc-meta-item"><label>Date</label><strong>'+today+'</strong></div><div class="inv-doc-meta-item"><label>Period</label><strong>'+monthLabel+'</strong></div><div class="inv-doc-meta-item"><label>Due</label><strong>Within 7 days</strong></div></div>'+
-    '<div class="inv-doc-parties"><div class="inv-doc-party"><label>From</label><strong>Evans Property Management</strong><p>Llanboidy<br>Carmarthenshire<br>SA34 0EU<br>Evandaviespropertymanagement@gmail.com<br>07398 074688</p></div><div class="inv-doc-party"><label>Billed To</label><strong>'+owner.owner+'</strong><p>'+addrLines+'</p></div><div class="inv-doc-party"><label>Property</label><strong>'+propName+'</strong></div></div>'+
-    '<div class="inv-doc-body"><h3>Management statement for '+monthLabel+'</h3><table class="inv-table"><thead><tr><th>Description</th><th>Detail</th><th>Amount</th></tr></thead><tbody>'+
-    rows+
-    (mgmt?'<tr class="section-divider"><td colspan="3">Management Fee</td></tr><tr class="subtotal-row"><td>Management Fee</td><td>Monthly</td><td></td></tr>':'')+
-    '<tr class="subtotal-row"><td>Changeovers &amp; extras</td><td></td><td>&pound;'+coTotal.toFixed(2)+'</td></tr>'+
-    (mgmt?'<tr class="subtotal-row"><td>Management fee</td><td></td><td>&pound;'+mgmt.toFixed(2)+'</td></tr>':'')+
-    '<tr class="total-row"><td colspan="2"><strong>Total Due</strong></td><td><strong>&pound;'+total.toFixed(2)+'</strong></td></tr>'+
-    '</tbody></table></div>'+
-    '<div class="inv-doc-footer-info"><div><h4>Payment Details</h4><p>Monzo-Evans Property Man<br>Sort code: 04-00-03<br>Account: 94071903<br>Ref: '+invNum+'</p></div><div><h4>Terms</h4><p>Payment to be kindly made within 7 days of issue date via BACS.</p></div><div><h4>Notes</h4><p>VAT is not applicable - Evans Property Management is not VAT registered.</p></div></div>'+
-    '<div class="inv-doc-bottom"><span>Evans Property Management &middot; VAT not applicable</span><span>Thank you for trusting us with your property.</span></div>';
-  document.getElementById('inv-doc-screen').classList.add('active');
-}
-
-function closeInvoice(){document.getElementById('inv-doc-screen').classList.remove('active');}
-
-// ===== STATS TAB =====
-function buildStatsPeriodOptions(){
-  const sel=document.getElementById('stats-period-sel');
-  if(!sel)return;
-  const now=new Date();
-  let opts='<option value="all">All time</option>';
-  for(let i=0;i<12;i++){
-    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-    const val=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-    const label=d.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
-    opts+='<option value="'+val+'">'+label+'</option>';
-  }
-  sel.innerHTML=opts;
-}
-
-function getRateForChangeover(c,cfg){
-  // Prefer the rate value the cleaner app submitted (e.g. "£130")
-  const rateRaw=c.Rate||c.rate||'';
-  const m=String(rateRaw).match(/[\d.]+/);
-  if(m)return parseFloat(m[0])||0;
-  // Fall back to deriving from PROPS_CFG + nights
-  if(!cfg)return 0;
-  const nights=parseInt(c.Nights||c.nights||0)||0;
-  if(cfg.rateType==='split')return nights>=(cfg.threshold||4)?cfg.rateLong:cfg.rateShort;
-  return cfg.flatRate||0;
-}
-
-function getStayCategory(c,cfg){
-  // Returns 'short' | 'long' | 'flat'
-  const raw=String(c['Stay Type']||c.stayType||c.StayType||'').toLowerCase();
-  if(raw.indexOf('short')===0)return 'short';
-  if(raw.indexOf('long')===0)return 'long';
-  if(raw.indexOf('flat')===0||raw.indexOf('all')===0)return 'flat';
-  // Derive from nights + cfg
-  if(cfg&&cfg.rateType==='split'){
-    const nights=parseInt(c.Nights||c.nights||0)||0;
-    return nights>=(cfg.threshold||4)?'long':'short';
-  }
-  return 'flat';
-}
-
-function getChangeoverIncome(c,cfg){
-  // The 'total' coming from the cleaner app already includes extras
-  const totalRaw=c.Total||c.total||'';
-  const m=String(totalRaw).match(/[\d.]+/);
-  if(m)return parseFloat(m[0])||0;
-  // Fallback
-  return getRateForChangeover(c,cfg);
-}
-
-function getChangeoverHours(c){
-  const h=parseFloat(c.Hours||c.hours||0);
-  return isNaN(h)?0:h;
-}
-
-function filterChangeoversForStats(){
-  const sel=document.getElementById('stats-period-sel');
-  const v=(sel&&sel.value)||'all';
-  if(!v||v==='all')return changeovers.slice();
-  const parts=v.split('-');
-  const yr=parseInt(parts[0]),mo=parseInt(parts[1]);
-  const ms=new Date(yr,mo-1,1),me=new Date(yr,mo,0,23,59,59);
-  return changeovers.filter(c=>{
-    const d=new Date(c.LoggedAt||c.Date||c.date||c.Timestamp||'');
-    return !isNaN(d)&&d>=ms&&d<=me;
-  });
-}
-
-function renderStatsTab(){
-  const data=filterChangeoversForStats();
-  renderStatsKpis(data);
-  renderTopProperties(data);
-  renderHoursByCleaner(data);
-  renderStayBreakdown(data);
-}
-
-function renderStatsKpis(data){
-  let income=0,hours=0;
-  data.forEach(c=>{
-    const cfg=PROPS_CFG[c.Property||c.property]||null;
-    income+=getChangeoverIncome(c,cfg);
-    hours+=getChangeoverHours(c);
-  });
-  const cleans=data.length;
-  const fmt=n=>'£'+Math.round(n).toLocaleString();
-  const el=document.getElementById('stats-kpis');
-  el.innerHTML=
-    '<div class="kpi-card"><div class="kpi-num">'+cleans+'</div><div class="kpi-lbl">Changeovers</div></div>'+
-    '<div class="kpi-card"><div class="kpi-num">'+fmt(income)+'</div><div class="kpi-lbl">Total income</div></div>'+
-    '<div class="kpi-card"><div class="kpi-num">'+(Math.round(hours*10)/10)+'</div><div class="kpi-lbl">Total hours</div></div>';
-}
-
-function renderTopProperties(data){
-  const byProp={};
-  data.forEach(c=>{
-    const p=c.Property||c.property||'Unknown';
-    const cfg=PROPS_CFG[p]||null;
-    if(!byProp[p])byProp[p]={cleans:0,income:0};
-    byProp[p].cleans+=1;
-    byProp[p].income+=getChangeoverIncome(c,cfg);
-  });
-  const rows=Object.entries(byProp).map(([p,v])=>({prop:p,cleans:v.cleans,income:v.income,avg:v.cleans?v.income/v.cleans:0}));
-  if(!rows.length){document.getElementById('stats-top-props').innerHTML='<div class="stats-no-data">No changeovers in this period.</div>';return;}
-  rows.sort((a,b)=>b.income-a.income);
-  const maxIncome=Math.max.apply(null,rows.map(r=>r.income))||1;
-  const html=rows.map((r,i)=>{
-    const pct=Math.round((r.income/maxIncome)*100);
-    return '<div class="rank-row">'+
-      '<div class="rank-num'+(i===0?' first':'')+'">'+(i+1)+'</div>'+
-      '<div style="flex:1;min-width:0">'+
-        '<div class="rank-name">'+escHtml(r.prop)+'</div>'+
-        '<div class="rank-meta">'+r.cleans+' clean'+(r.cleans!==1?'s':'')+' &middot; avg &pound;'+r.avg.toFixed(0)+'</div>'+
-        '<div class="rank-bar-wrap"><div class="rank-bar" style="width:'+pct+'%"></div></div>'+
-      '</div>'+
-      '<div class="rank-val">&pound;'+r.income.toFixed(0)+'</div>'+
-    '</div>';
-  }).join('');
-  document.getElementById('stats-top-props').innerHTML=html;
-}
-
-function renderHoursByCleaner(data){
-  const byCleaner={};
-  data.forEach(c=>{
-    const name=(c.Cleaner||c.cleaner||c.Name||'Unassigned').trim()||'Unassigned';
-    if(!byCleaner[name])byCleaner[name]={hours:0,cleans:0};
-    byCleaner[name].hours+=getChangeoverHours(c);
-    byCleaner[name].cleans+=1;
-  });
-  const rows=Object.entries(byCleaner).map(([n,v])=>({name:n,hours:v.hours,cleans:v.cleans,avg:v.cleans?v.hours/v.cleans:0}));
-  if(!rows.length){document.getElementById('stats-cleaners').innerHTML='<div class="stats-no-data">No cleaners logged in this period.</div>';return;}
-  rows.sort((a,b)=>b.hours-a.hours);
-  const maxHours=Math.max.apply(null,rows.map(r=>r.hours))||1;
-  const html=rows.map((r,i)=>{
-    const pct=Math.round((r.hours/maxHours)*100);
-    return '<div class="rank-row">'+
-      '<div class="rank-num'+(i===0?' first':'')+'">'+(i+1)+'</div>'+
-      '<div style="flex:1;min-width:0">'+
-        '<div class="rank-name">'+escHtml(r.name)+'</div>'+
-        '<div class="rank-meta">'+r.cleans+' clean'+(r.cleans!==1?'s':'')+' &middot; avg '+r.avg.toFixed(1)+' hrs/clean</div>'+
-        '<div class="rank-bar-wrap"><div class="rank-bar" style="width:'+pct+'%"></div></div>'+
-      '</div>'+
-      '<div class="rank-val">'+(Math.round(r.hours*10)/10)+' hrs</div>'+
-    '</div>';
-  }).join('');
-  document.getElementById('stats-cleaners').innerHTML=html;
-}
-
-function renderStayBreakdown(data){
-  const byProp={};
-  data.forEach(c=>{
-    const p=c.Property||c.property||'Unknown';
-    const cfg=PROPS_CFG[p]||null;
-    const cat=getStayCategory(c,cfg);
-    const inc=getChangeoverIncome(c,cfg);
-    if(!byProp[p])byProp[p]={short:0,long:0,flat:0,shortInc:0,longInc:0,flatInc:0};
-    byProp[p][cat]+=1;
-    byProp[p][cat+'Inc']+=inc;
-  });
-  const rows=Object.entries(byProp).map(([p,v])=>{
-    const total=v.short+v.long+v.flat;
-    const totalInc=v.shortInc+v.longInc+v.flatInc;
-    return {prop:p,total,totalInc,...v};
-  });
-  if(!rows.length){document.getElementById('stats-stays').innerHTML='<div class="stats-no-data">No stays in this period.</div>';return;}
-  rows.sort((a,b)=>b.totalInc-a.totalInc);
-  const html=rows.map(r=>{
-    const sPct=r.total?Math.round((r.short/r.total)*100):0;
-    const lPct=r.total?Math.round((r.long/r.total)*100):0;
-    const fPct=r.total?Math.max(0,100-sPct-lPct):0;
-    const detail=[];
-    if(r.short)detail.push(r.short+' short (&pound;'+r.shortInc.toFixed(0)+')');
-    if(r.long)detail.push(r.long+' long (&pound;'+r.longInc.toFixed(0)+')');
-    if(r.flat)detail.push(r.flat+' flat (&pound;'+r.flatInc.toFixed(0)+')');
-    return '<div class="stay-row">'+
-      '<div class="stay-row-top"><span class="stay-prop">'+escHtml(r.prop)+'</span><span class="stay-total">'+r.total+' clean'+(r.total!==1?'s':'')+' &middot; &pound;'+r.totalInc.toFixed(0)+'</span></div>'+
-      '<div class="stay-bar">'+
-        (sPct>0?'<div class="stay-bar-short" style="width:'+sPct+'%"></div>':'')+
-        (lPct>0?'<div class="stay-bar-long" style="width:'+lPct+'%"></div>':'')+
-        (fPct>0?'<div class="stay-bar-flat" style="width:'+fPct+'%"></div>':'')+
-      '</div>'+
-      '<div class="rank-meta">'+detail.join(' &middot; ')+'</div>'+
-    '</div>';
-  }).join('');
-  document.getElementById('stats-stays').innerHTML=html;
-}
+loadData();
 </script>
 </body>
 </html>
