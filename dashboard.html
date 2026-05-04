@@ -155,15 +155,7 @@ button{font-family:Jost,sans-serif;cursor:pointer}
 </style>
 </head>
 <body>
-<div id="pin-screen" class="pin-screen">
-  <div class="pin-logo">Evans <span>Property Management</span></div>
-  <div class="pin-sub">Admin Dashboard</div>
-  <div class="pin-label">Enter PIN</div>
-  <input type="password" inputmode="numeric" maxlength="6" class="pin-input" id="pin-input" placeholder="****">
-  <button class="pin-btn" onclick="checkPin()">Enter</button>
-  <div class="pin-error" id="pin-error">Incorrect PIN. Try again.</div>
-</div>
-<div id="main-app" style="display:none">
+<div id="main-app">
   <div class="header"><div><div class="header-title">Evans <span>Property Management</span></div><div class="header-sub">Admin Dashboard</div></div></div>
   <div class="gold-bar"></div>
   <div class="dash-nav">
@@ -288,12 +280,7 @@ function isUrgent(note){return URGENT_RE.test(note||'');}
 function fmtUpdated(iso){if(!iso)return'';const d=new Date(iso);if(isNaN(d))return'';return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
-function checkPin(){
-  const v=document.getElementById('pin-input').value;
-  if(v===PIN){document.getElementById('pin-screen').style.display='none';document.getElementById('main-app').style.display='block';loadData();}
-  else{document.getElementById('pin-error').style.display='block';document.getElementById('pin-input').value='';}
-}
-document.getElementById('pin-input').addEventListener('keydown',function(e){if(e.key==='Enter')checkPin();});
+loadData();
 
 function showTab(t){
   document.getElementById('tab-reports').style.display=t==='reports'?'block':'none';
