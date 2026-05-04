@@ -39,7 +39,17 @@ input,textarea,select{font-family:Jost,sans-serif}
 .primary-btn:active{opacity:.8}
 .props-header{max-width:540px;margin:0 auto;padding:24px 20px 0}
 .greeting{font-size:1.4rem;font-weight:700;color:var(--g);margin-bottom:4px}
-.greeting-sub{font-size:.88rem;color:#888;margin-bottom:20px}
+.greeting-sub{font-size:.88rem;color:#888;margin-bottom:10px}
+.sync-row{display:flex;align-items:center;gap:10px;font-size:.72rem;color:#888;margin-bottom:18px}
+.sync-status{display:inline-flex;align-items:center;gap:6px}
+.sync-status::before{content:'';width:7px;height:7px;border-radius:50%;background:#bbb;display:inline-block}
+.sync-status.ok::before{background:#1e5631}
+.sync-status.stale::before{background:var(--gold)}
+.sync-status.fail::before{background:var(--red)}
+.sync-refresh{background:none;border:1.5px solid var(--border);border-radius:50%;width:28px;height:28px;color:#888;font-size:.95rem;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;margin-left:auto}
+.sync-refresh:active{background:#f0f0f0}
+.sync-refresh.spinning{animation:epm-spin 1s linear infinite;pointer-events:none;opacity:.6}
+@keyframes epm-spin{to{transform:rotate(360deg)}}
 .sched-wrap{max-width:540px;margin:0 auto;padding:0 20px}
 .priority-banner{background:#fff0ed;border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
 .priority-banner-icon{font-size:1.1rem}
@@ -166,6 +176,10 @@ input,textarea,select{font-family:Jost,sans-serif}
   <div class="props-header">
     <div class="greeting">Good to see you, <span id="cleaner-greeting"></span>!</div>
     <div class="greeting-sub">Tap below to select the property you’re cleaning today.</div>
+    <div class="sync-row">
+      <span class="sync-status" id="sync-status">Syncing…</span>
+      <button class="sync-refresh" id="sync-refresh" onclick="loadBookings()" aria-label="Refresh bookings" title="Refresh bookings">↻</button>
+    </div>
   </div>
   
   <div class="sched-wrap">
@@ -259,7 +273,7 @@ input,textarea,select{font-family:Jost,sans-serif}
 
 <!-- DASHBOARD VIEW -->
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUDsON3GhWBoqlTaChyHCWKHutuvT4RFiZpbEUi5dG_-6yMM-GpsGUoMwQP7x922lnYA/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6ude4tWpwxI2MChF8qdeNOptOm3lZDdDdVTWcrE_4FTgfGItQx9qKEIlIxCEuoTxq6Q/exec';
 
 const PROPERTIES = [
   { id:'maes-dyfed', name:'Maes Dyfed', ref:'MD', rateType:'split', rateShort:130, rateLong:170, threshold:4, mgmtFee:80, extras:[{name:'Bins',price:10},{name:'Bara Brith',price:2.99},{name:'Toilet Rolls',price:8.60},{name:'Lawns',price:25},{name:'Logs',price:7.00}] },
@@ -286,7 +300,9 @@ const OWNER_DATA = {
 };
 
 let cleanerName = localStorage.getItem('epm_cleaner') || '';
-let bookings = JSON.parse(localStorage.getItem('epm_bookings') || '[]');
+let bookings = [];
+try { bookings = JSON.parse(localStorage.getItem('epm_bookings') || '[]'); if (!Array.isArray(bookings)) bookings = []; } catch(e) { bookings = []; }
+let syncStatus = 'idle';
 let prop = null, booking = null, stayType = null;
 let selExtras = [], adhocItems = [], isManual = false;
 let _allIssues = [], _issueFilter = 'all';
@@ -318,20 +334,83 @@ function showPropList() {
 }
 
 async function loadBookings() {
+  if (syncStatus === 'syncing') return;
+  syncStatus = 'syncing';
+  renderSyncStatus();
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), 8000);
   try {
-    const res = await fetch(APPS_SCRIPT_URL + '?action=bookings');
-    const data = await res.json();
-    if (Array.isArray(data)) {
-      bookings = data.map(b => ({
-        id: b.ID||b.id, property: b.Property||b.property, guest: b.Guest||b.guest,
-        start: normaliseDate(b.Start||b.start||''), end: normaliseDate(b.End||b.end||b.Departure||''),
-        nights: parseInt(b.Nights||b.nights)||0, ref: b.Ref||b.ref||'',
-        isOwner: (b.IsOwner||b.isOwner||'').toString().toLowerCase()==='yes'||b.isOwner===true,
-      }));
-      localStorage.setItem('epm_bookings', JSON.stringify(bookings));
+    const res = await fetch(APPS_SCRIPT_URL + '?action=bookings', { signal: ac.signal, cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const ct = (res.headers.get('content-type') || '').toLowerCase();
+    const text = await res.text();
+    if (!ct.includes('json') && text.trim().startsWith('<')) throw new Error('Non-JSON response (Apps Script may be erroring)');
+    let data;
+    try { data = JSON.parse(text); } catch(e) { throw new Error('Invalid JSON: ' + e.message); }
+    const arr = Array.isArray(data) ? data : (data && Array.isArray(data.data) ? data.data : null);
+    if (!arr) throw new Error('Unexpected response shape');
+    const mapped = arr.map(b => ({
+      id: b.ID||b.id, property: b.Property||b.property, guest: b.Guest||b.guest,
+      start: normaliseDate(b.Start||b.start||''), end: normaliseDate(b.End||b.end||b.Departure||''),
+      nights: parseInt(b.Nights||b.nights)||0, ref: b.Ref||b.ref||'',
+      isOwner: (b.IsOwner||b.isOwner||'').toString().toLowerCase()==='yes'||b.isOwner===true,
+    })).filter(b => b.property && b.end);
+    // Don't wipe a non-empty cache with an empty response — likely a transient backend hiccup.
+    if (mapped.length === 0 && bookings.length > 0) {
+      console.warn('Bookings response was empty; keeping', bookings.length, 'cached.');
+      syncStatus = 'fail';
+    } else {
+      bookings = mapped;
+      try {
+        localStorage.setItem('epm_bookings', JSON.stringify(bookings));
+        localStorage.setItem('epm_bookings_synced', String(Date.now()));
+      } catch(e) { console.log('localStorage write failed:', e.message); }
+      syncStatus = 'ok';
     }
-  } catch(e) { console.log('Bookings fetch failed, using cached:', e.message); }
-  renderProps();
+  } catch(e) {
+    console.log('Bookings fetch failed, using cached:', e.message);
+    syncStatus = 'fail';
+  } finally {
+    clearTimeout(timer);
+    renderProps();
+    renderSyncStatus();
+  }
+}
+
+function fmtAgo(min) {
+  if (min < 1) return 'just now';
+  if (min < 60) return min + ' min ago';
+  const h = Math.round(min / 60);
+  if (h < 24) return h + ' hr ago';
+  const d = Math.round(h / 24);
+  return d + ' day' + (d !== 1 ? 's' : '') + ' ago';
+}
+
+function renderSyncStatus() {
+  const el = document.getElementById('sync-status');
+  const btn = document.getElementById('sync-refresh');
+  if (!el) return;
+  const tsRaw = localStorage.getItem('epm_bookings_synced');
+  const ts = tsRaw ? parseInt(tsRaw) : 0;
+  const ageMin = ts ? Math.round((Date.now() - ts) / 60000) : Infinity;
+  let cls = '', text = '';
+  if (syncStatus === 'syncing') {
+    text = 'Syncing…';
+    btn && btn.classList.add('spinning');
+  } else {
+    btn && btn.classList.remove('spinning');
+    if (syncStatus === 'fail' && !ts) {
+      cls = 'fail'; text = "Couldn't load bookings — tap ↻ to retry";
+    } else if (syncStatus === 'fail') {
+      cls = 'fail'; text = 'Offline — using cached data (' + fmtAgo(ageMin) + ')';
+    } else if (ageMin > 120) {
+      cls = 'stale'; text = 'Synced ' + fmtAgo(ageMin) + ' — may be stale';
+    } else {
+      cls = 'ok'; text = 'Synced ' + fmtAgo(ageMin);
+    }
+  }
+  el.className = 'sync-status' + (cls ? ' ' + cls : '');
+  el.textContent = text;
 }
 
 function normaliseDate(d) {
@@ -394,6 +473,7 @@ function renderProps() {
     return '<div class="prop-card'+(hasToday?' today':'')+'" onclick="selProp(\''+p.id+'\')"><div class="prop-stripe"></div><div class="prop-inner"><div class="prop-avatar">'+initials+'</div><div class="prop-name">'+p.name+'</div><div class="prop-footer">'+(hasToday?'<span class="today-pill">Today</span>':'<span></span>')+'<span class="prop-arrow">›</span></div></div></div>';
   }).join('')+'</div>';
   renderSchedule();
+  renderSyncStatus();
 }
 function renderSchedule() {
   const today = new Date(); today.setHours(0,0,0,0);
